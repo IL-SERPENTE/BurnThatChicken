@@ -1,0 +1,14 @@
+name: BurnThatChicken
+main: com.samagames.burnthatchicken.BTCPlugin
+version: Dev0.1
+
+depend: []
+
+commands:
+
+  game:
+    description: Plugin command ;D
+    usage:
+  debug:
+    description: Pause game
+    usage:

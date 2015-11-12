@@ -81,7 +81,7 @@ public class BTCChickenChecker implements Runnable
 							player.setSpectator();
 							main.addPlayerToRank(player);
 							Player p = player.getPlayerIfOnline();
-							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + player + " est éliminé !");
+							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + player.getName() + " est éliminé !");
 							if (p != null)
 							{
 								ChatUtils.sendBigMessage(p, "", 0, 100, 0);

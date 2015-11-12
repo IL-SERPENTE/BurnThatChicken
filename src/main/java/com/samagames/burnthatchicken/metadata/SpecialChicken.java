@@ -8,6 +8,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
+import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.task.BTCBackgroundTask;
 
@@ -53,6 +54,9 @@ public enum SpecialChicken
 	
 	public void run(BTCPlugin main, Player p)
 	{
+		BTCPlayer player = main.getGame().getPlayer(p.getUniqueId());
+		if (player == null)
+			return ;
 		switch(this)
 		{
 		case BLINDNESS:
@@ -60,7 +64,9 @@ public enum SpecialChicken
 			break;
 		case MORE_CHICKENS:
 			BTCBackgroundTask task = BTCBackgroundTask.getInstance();
-			BTCGameZone zone = main.getCurrentMap().getGameZones().get(main.getPlayers().get(p.getName()));
+			BTCGameZone zone = player.getZone();
+			if (zone == null)
+				return ;
 			task.spawnChicken(zone, false);
 			task.spawnChicken(zone, false);
 			task.spawnChicken(zone, false);

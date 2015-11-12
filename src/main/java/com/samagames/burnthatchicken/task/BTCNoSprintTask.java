@@ -1,11 +1,6 @@
 package com.samagames.burnthatchicken.task;
 
-import java.util.Collection;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-
+import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.util.GameState;
 
@@ -21,14 +16,11 @@ public class BTCNoSprintTask implements Runnable
 	@Override
 	public void run()
 	{
-		if (main.isDebug())
+		if (main.getGame().getGameState() == GameState.WAITING)
 			return ;
-		if (main.getGameState() == GameState.WAITING)
-			return ;
-		Collection <? extends Player> players = Bukkit.getOnlinePlayers();
-		for (Player p : players)
-			if (p.getGameMode() == GameMode.ADVENTURE)
-				p.setSprinting(false);
+		for (BTCPlayer player : main.getGame().getInGamePlayers().values())
+			if (player.isOnline())
+				player.getPlayerIfOnline().setSprinting(false);
 	}
 
 }

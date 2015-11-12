@@ -1,15 +1,17 @@
 package com.samagames.burnthatchicken.task;
 
+import java.util.UUID;
+
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
 
 public class PowerUpTask implements Runnable
 {
 	private BTCPlugin main;
-	private String name;
+	private UUID name;
 	private SpecialChicken special;
 	
-	public PowerUpTask(BTCPlugin m, String n, SpecialChicken s)
+	public PowerUpTask(BTCPlugin m, UUID n, SpecialChicken s)
 	{
 		main = m;
 		name = n;
@@ -22,7 +24,7 @@ public class PowerUpTask implements Runnable
 		main.removePowerUp(this);
 	}
 
-	public String getName()
+	public UUID getName()
 	{
 		return name;
 	}

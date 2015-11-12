@@ -71,82 +71,74 @@ public class BTCMap
 		return gamezones;
 	}
 	
-	public static boolean loadMaps(List<BTCMap> list)
+	public static BTCMap loadMap(BTCPlugin main)
 	{
-		for (int i = 0; true; i++)
+		File file = new File("plugins/BurnThatChicken", "map.yml");
+		if (!file.exists())
+			return null;
+		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
+		String w = yaml.getString("world", null);
+		if (w == null)
+			return null;
+		World world = Bukkit.getWorld(w);
+		if (world == null)
+			return null;
+		int n = yaml.getInt("max_players", -1);
+		int mn = yaml.getInt("min_players", -1);
+		double x = yaml.getDouble("lobby.x");
+		double y = yaml.getDouble("lobby.y");
+		double z = yaml.getDouble("lobby.z");
+		int yaw = yaml.getInt("lobby.yaw");
+		Location lobby = new Location(world, x, y, z);
+		BTCMap g = new BTCMap(n, mn, lobby, yaml.getBoolean("move", false), yaml.getBoolean("jump", false));
+		for (int j = 0; true; j++)
 		{
-			File file = new File("plugins/BurnThatChicken", "map-" + i + ".yml");
-			if (!file.exists())
+			if (yaml.get("zone-" + j) == null)
 				break ;
-			YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-			String w = yaml.getString("world", null);
-			if (w == null)
-				continue ;
-			World world = Bukkit.getWorld(w);
-			if (world == null)
-				continue ;
-			int n = yaml.getInt("max_players", -1);
-			int mn = yaml.getInt("min_players", -1);
-			double x = yaml.getDouble("lobby.x");
-			double y = yaml.getDouble("lobby.y");
-			double z = yaml.getDouble("lobby.z");
-			int yaw = yaml.getInt("lobby.yaw");
-			Location lobby = new Location(world, x, y, z);
-			BTCMap g = new BTCMap(n, mn, lobby, yaml.getBoolean("move", false), yaml.getBoolean("jump", false));
-			for (int j = 0; true; j++)
-			{
-				if (yaml.get("zone-" + j) == null)
-					break ;
-				x = yaml.getDouble("zone-" + j + ".spawn.x");
-				y = yaml.getDouble("zone-" + j + ".spawn.y");
-				z = yaml.getDouble("zone-" + j + ".spawn.z");
-				yaw = yaml.getInt("zone-" + j + ".spawn.yaw");
-				Location spawn = new Location(world, x, y, z);
-				spawn.setYaw(yaw);
+			x = yaml.getDouble("zone-" + j + ".spawn.x");
+			y = yaml.getDouble("zone-" + j + ".spawn.y");
+			z = yaml.getDouble("zone-" + j + ".spawn.z");
+			yaw = yaml.getInt("zone-" + j + ".spawn.yaw");
+			Location spawn = new Location(world, x, y, z);
+			spawn.setYaw(yaw);
 
-				x = yaml.getDouble("zone-" + j + ".spawnzone1.x");
-				y = yaml.getDouble("zone-" + j + ".spawnzone1.y");
-				z = yaml.getDouble("zone-" + j + ".spawnzone1.z");
-				Location szone1 = new Location(world, x, y, z);
+			x = yaml.getDouble("zone-" + j + ".spawnzone1.x");
+			y = yaml.getDouble("zone-" + j + ".spawnzone1.y");
+			z = yaml.getDouble("zone-" + j + ".spawnzone1.z");
+			Location szone1 = new Location(world, x, y, z);
 
-				x = yaml.getDouble("zone-" + j + ".spawnzone2.x");
-				y = yaml.getDouble("zone-" + j + ".spawnzone2.y");
-				z = yaml.getDouble("zone-" + j + ".spawnzone2.z");
-				Location szone2 = new Location(world, x, y, z);
+			x = yaml.getDouble("zone-" + j + ".spawnzone2.x");
+			y = yaml.getDouble("zone-" + j + ".spawnzone2.y");
+			z = yaml.getDouble("zone-" + j + ".spawnzone2.z");
+			Location szone2 = new Location(world, x, y, z);
 
-				x = yaml.getDouble("zone-" + j + ".endzone1.x");
-				y = yaml.getDouble("zone-" + j + ".endzone1.y");
-				z = yaml.getDouble("zone-" + j + ".endzone1.z");
-				Location ezone1 = new Location(world, x, y, z);
+			x = yaml.getDouble("zone-" + j + ".endzone1.x");
+			y = yaml.getDouble("zone-" + j + ".endzone1.y");
+			z = yaml.getDouble("zone-" + j + ".endzone1.z");
+			Location ezone1 = new Location(world, x, y, z);
 
-				x = yaml.getDouble("zone-" + j + ".endzone2.x");
-				y = yaml.getDouble("zone-" + j + ".endzone2.y");
-				z = yaml.getDouble("zone-" + j + ".endzone2.z");
-				Location ezone2 = new Location(world, x, y, z);
-				
-				g.addGameZone(spawn, szone1, szone2, ezone1, ezone2);
-			}
-			if (g.isReady())
-				list.add(g);
-			else
-				Bukkit.getLogger().severe("[BTC] Map " + i + " incorrecte (joueurs max : " + g.getMaxPlayers() + ",joueurs min : " + g.getMinPlayers() + ", zones : " + g.getGameZones().size() + ").");
+			x = yaml.getDouble("zone-" + j + ".endzone2.x");
+			y = yaml.getDouble("zone-" + j + ".endzone2.y");
+			z = yaml.getDouble("zone-" + j + ".endzone2.z");
+			Location ezone2 = new Location(world, x, y, z);
+			
+			g.addGameZone(spawn, szone1, szone2, ezone1, ezone2);
 		}
-		if (list.size() == 0)
-		{
-			Bukkit.getLogger().severe("[BTC] Pas assez de map conformes pour jouer -> Arrêt du serveur.");
-			Bukkit.shutdown();
-			return false;
-		}
-		return true;
+		if (g.isReady())
+			return g;
+		else
+			Bukkit.getLogger().severe("[BTC] Map incorrecte (joueurs max : " + g.getMaxPlayers() + ",joueurs min : " + g.getMinPlayers() + ", zones : " + g.getGameZones().size() + ").");
+		return null;
 	}
 	
-	public class BTCGameZone
+	public static class BTCGameZone
 	{
 		private Location spawn;
 		private Location[] spawnzone;
 		private Location[] endzone;
 		private int id;
 		private boolean end;
+		private BTCPlayer player;
 		
 		public BTCGameZone(int i, Location s, Location z1, Location z2, Location e1, Location e2)
 		{
@@ -159,6 +151,7 @@ public class BTCMap
 			endzone[0] = e1;
 			endzone[1] = e2;
 			end = true;
+			player = null;
 		}
 		
 		public Location getPlayerSpawn()
@@ -198,6 +191,16 @@ public class BTCMap
 		public int getUniqueId()
 		{
 			return id;
+		}
+		
+		public void setPlayer(BTCPlayer player)
+		{
+			this.player = player;
+		}
+		
+		public BTCPlayer getPlayer()
+		{
+			return player;
 		}
 	}
 }

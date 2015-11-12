@@ -4,15 +4,14 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
+import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.MetadataUtils;
@@ -35,8 +34,6 @@ public class BTCChickenChecker implements Runnable
 	@Override
 	public void run()
 	{
-		if (main.isDebug())
-			return ;
 		for (World w : Bukkit.getWorlds())
 			for (Entity e : w.getEntities())
 			{
@@ -77,23 +74,19 @@ public class BTCChickenChecker implements Runnable
 						if (zone.isInChickenEndZone(e.getLocation()))
 						{
 							zone.setEnded(true);
-							clearChicken(zone.getUniqueId());
-							String player = main.getPlayerById(zone.getUniqueId());
+							clearChicken(zone);
+							BTCPlayer player = main.getPlayerByZone(zone.getUniqueId());
 							if (player == null)
 								return ;
-							main.getPlayers().remove(player);
-							Player p = Bukkit.getPlayer(player);
+							player.setSpectator();
 							main.addPlayerToRank(player);
-							if (p == null)
-								return ;
-							ChatUtils.sendBigMessage(p, "", 0, 100, 0);
-							ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
-							main.getPlayers().put(player, -1);
-							p.setWalkSpeed(0.2F);
-							p.removePotionEffect(PotionEffectType.JUMP);
-							p.setGameMode(GameMode.SPECTATOR);
-							p.getInventory().clear();
+							Player p = player.getPlayerIfOnline();
 							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + player + " est éliminé !");
+							if (p != null)
+							{
+								ChatUtils.sendBigMessage(p, "", 0, 100, 0);
+								ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
+							}
 							main.checkPlayers();
 							main.updateScoreBoard();
 						}
@@ -101,7 +94,7 @@ public class BTCChickenChecker implements Runnable
 			}
 	}
 
-	public void clearChicken(int zoneid)
+	public void clearChicken(BTCGameZone btcGameZone)
 	{
 		for (World w : Bukkit.getWorlds())
 			for (Entity e : w.getEntities())
@@ -116,7 +109,7 @@ public class BTCChickenChecker implements Runnable
 					e.remove();
 					continue ;
 				}
-				if (zoneid == meta.getGameZoneId())
+				if (btcGameZone.getUniqueId() == meta.getGameZoneId())
 					e.remove();
 			}
 	}

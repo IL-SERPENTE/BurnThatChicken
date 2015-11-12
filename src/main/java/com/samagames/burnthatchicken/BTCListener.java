@@ -21,28 +21,17 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerChatEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.MetadataUtils;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
-import com.samagames.burnthatchicken.task.BTCChickenChecker;
-import com.samagames.burnthatchicken.util.BTCInventories;
-import com.samagames.burnthatchicken.util.ChatUtils;
 import com.samagames.burnthatchicken.util.GameState;
 
-@SuppressWarnings("deprecation")
 public class BTCListener implements Listener
 {
 	private BTCPlugin main;
@@ -53,84 +42,9 @@ public class BTCListener implements Listener
 	}
 	
 	@EventHandler
-	public void onPreConnect(PlayerLoginEvent ev)
-	{
-		if (main.getGameState() != GameState.WAITING)
-			ev.disallow(Result.KICK_OTHER, "Partie en cours");
-		else if (main.getPlayers().size() >= main.getCurrentMap().getMaxPlayers())
-			ev.disallow(Result.KICK_FULL, "Serveur plein");
-	}
-	
-	@EventHandler
-	public void onLeave(PlayerQuitEvent ev)
-	{
-		ev.setQuitMessage(null);
-		this.onDisconnect(ev.getPlayer());
-	}
-	
-	@EventHandler
-	public void onKicked(PlayerKickEvent ev)
-	{
-		ev.setLeaveMessage(null);
-		this.onDisconnect(ev.getPlayer());
-	}
-	
-	public void onDisconnect(Player player)
-	{
-		int id = -1;
-		if (main.getPlayers().containsKey(player.getName()))
-		{
-			id = main.getPlayers().get(player.getName());
-			main.getPlayers().remove(player.getName());
-		}
-		if (main.getGameState() == GameState.FINISHED)
-			return ;
-		Bukkit.broadcastMessage(ChatUtils.getPluginPrefix() + player.getName() + " a quitté la partie" + (main.getGameState() == GameState.WAITING ? " ! " + ChatColor.DARK_GRAY + "[" + ChatColor.RED +
-				main.getPlayers().size() + ChatColor.DARK_GRAY + "/" + ChatColor.RED + main.getCurrentMap().getMaxPlayers() + ChatColor.DARK_GRAY + "]" : "."));
-		if (main.getGameState() == GameState.IN_GAME)
-		{
-			main.addPlayerToRank(player.getName());
-			if (id != -1)
-			{
-				for (BTCGameZone zone : main.getCurrentMap().getGameZones())
-				{
-					if (zone.getUniqueId() != id)
-						continue ;
-					zone.setEnded(true);
-					BTCChickenChecker.getInstance().clearChicken(id);
-				}
-			}
-			main.checkPlayers();
-		}
-		main.updateScoreBoard();
-	}
-	
-	@EventHandler
-	public void onConnect(PlayerJoinEvent ev)
-	{
-		Player p = ev.getPlayer();
-		main.getPlayers().put(ev.getPlayer().getName(), -1);
-		ev.setJoinMessage(null);
-		Bukkit.broadcastMessage(ChatUtils.getPluginPrefix() + p.getName() + " a rejoint la partie ! " + ChatColor.DARK_GRAY + "[" + ChatColor.RED +
-				main.getPlayers().size() + ChatColor.DARK_GRAY + "/" + ChatColor.RED + main.getCurrentMap().getMaxPlayers() + ChatColor.DARK_GRAY + "]");
-		ChatUtils.setFooterAndHeader(p, ChatColor.AQUA + "" + ChatColor.BOLD + "BurnThatChicken", ChatColor.GOLD + "" + ChatColor.BOLD + "SamaGames");
-		p.setMaxHealth(20);
-		p.setHealth(20);
-		p.setFoodLevel(20);
-		p.setFlying(false);
-		p.setAllowFlight(false);
-		p.setGameMode(GameMode.ADVENTURE);
-		p.setWalkSpeed(0.2F);
-		p.removePotionEffect(PotionEffectType.JUMP);
-		p.teleport(main.getCurrentMap().getWaitingLobby());
-		BTCInventories.giveLobbyInventory(p);
-		main.updateScoreBoard();
-	}
-	
-	@EventHandler
 	public void onEntityDamagedByEntity(EntityDamageByEntityEvent ev)
 	{
-		if (main.getGameState() != GameState.IN_GAME || !(ev.getDamager() instanceof Arrow) || !(ev.getEntity() instanceof Chicken))
+		if (main.getGame().getGameState() != GameState.IN_GAME || !(ev.getDamager() instanceof Arrow) || !(ev.getEntity() instanceof Chicken))
 		{
 			ev.setCancelled(true);
 			return ;
@@ -138,25 +52,29 @@ public class BTCListener implements Listener
 		Arrow arrow = (Arrow)ev.getDamager();
 		Chicken chicken = (Chicken)ev.getEntity();
 		ChickenMetadataValue data = ChickenMetadataValue.getMetadataValueFromChicken(main, chicken);
-		if (data == null || arrow.getShooter() == null || !(arrow.getShooter() instanceof Player) || !main.getPlayers().containsKey(((Player)arrow.getShooter()).getName()))
+		if (data == null || arrow.getShooter() == null || !(arrow.getShooter() instanceof Player))
 		{
 			ev.setCancelled(true);
 			return ;
 		}
 		Player shooter = (Player)arrow.getShooter();
-		int sid = main.getPlayers().get(shooter.getName());
-		int cid = data.getGameZoneId();
-		if (sid != cid)
+		BTCPlayer player = main.getGame().getPlayer(shooter.getUniqueId());
+		if (player == null)
+		{
+			ev.setCancelled(true);
+			return ;
+		}
+		if (player.getZone().getUniqueId() != data.getGameZoneId())
 		{
 			ev.setCancelled(true);
 			return ;
 		}
 		chicken.setHealth(0);
 		arrow.remove();
-		main.addChicken(shooter.getName());
+		player.addChicken();
 		if (data.isSpecial())
 		{
-			main.addPowerUp(shooter.getName(), data.getSpecialAttribute(), data.getSpecialAttribute().getDuration());
+			main.addPowerUp(shooter.getUniqueId(), data.getSpecialAttribute(), data.getSpecialAttribute().getDuration());
 			data.getSpecialAttribute().run(main, shooter);
 		}
 		main.updateScoreBoard();
@@ -165,7 +83,7 @@ public class BTCListener implements Listener
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent ev)
 	{
-		if (main.getGameState() != GameState.IN_GAME || ev.getCause() != DamageCause.ENTITY_ATTACK)
+		if (main.getGame().getGameState() != GameState.IN_GAME || ev.getCause() != DamageCause.ENTITY_ATTACK)
 		{
 			ev.setCancelled(true);
 			return ;
@@ -187,7 +105,7 @@ public class BTCListener implements Listener
 	}
 	
 	@EventHandler
-	public void onChat(PlayerChatEvent ev)
+	public void onChat(AsyncPlayerChatEvent ev)//TODO
 	{
 		if (ev.isCancelled())
 			return ;
@@ -213,7 +131,7 @@ public class BTCListener implements Listener
 	{
 		if (main.getCurrentMap().canPlayersMove())
 			return ;
-		if (main.getGameState() == GameState.IN_GAME && ev.getPlayer().getGameMode() == GameMode.ADVENTURE)
+		if (main.getGame().getGameState() == GameState.IN_GAME && ev.getPlayer().getGameMode() == GameMode.ADVENTURE)
 		{
 		    Location to = ev.getFrom();
 		    to.setY(ev.getTo().getY());
@@ -265,9 +183,9 @@ public class BTCListener implements Listener
 	{
 		if (!(ev.getEntity() instanceof Arrow) || ev.getEntity().getShooter() == null || !(ev.getEntity().getShooter() instanceof Player) || MetadataUtils.getMetaData(main, ev.getEntity(), "btc-arrow2") != null)
 			return ;
-		if (main.getGameState() != GameState.IN_GAME)
+		if (main.getGame().getGameState() != GameState.IN_GAME)
 			ev.setCancelled(true);
-		else if (main.hasPowerUp(((Player)ev.getEntity().getShooter()).getName(), SpecialChicken.DOUBLE_ARROW))
+		else if (main.hasPowerUp(((Player)ev.getEntity().getShooter()).getUniqueId(), SpecialChicken.DOUBLE_ARROW))
 		{
 			double angle = Math.PI / 60;
 			Arrow arrow1 = (Arrow)ev.getEntity();

@@ -9,9 +9,9 @@ import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle.EnumTitleAction;
+import net.samagames.api.SamaGamesAPI;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
@@ -21,7 +21,7 @@ public class ChatUtils
 	
 	public static String getPluginPrefix()
 	{
-		return ChatColor.DARK_AQUA + "[" + ChatColor.AQUA + "BurnThatChicken" + ChatColor.DARK_AQUA + "] " + ChatColor.YELLOW;
+		return SamaGamesAPI.get().getGameManager().getCoherenceMachine().getGameTag();
 	}
 	
 	public static void sendMessageToNameList(List<String> list, String msg)

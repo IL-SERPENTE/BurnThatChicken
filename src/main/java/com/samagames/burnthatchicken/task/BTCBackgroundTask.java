@@ -1,29 +1,17 @@
 package com.samagames.burnthatchicken.task;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
-import com.samagames.burnthatchicken.util.BTCInventories;
-import com.samagames.burnthatchicken.util.ChatUtils;
-import com.samagames.burnthatchicken.util.GameState;
 
 public class BTCBackgroundTask implements Runnable
 {
@@ -44,9 +32,7 @@ public class BTCBackgroundTask implements Runnable
 	@Override
 	public void run()
 	{
-		if (main.isDebug())
-			return ;
-		switch(main.getGameState())
+		switch(main.getGame().getGameState())
 		{
 		case IN_GAME:
 			int r = 0;
@@ -67,110 +53,8 @@ public class BTCBackgroundTask implements Runnable
 			delay++;
 			main.updateScoreBoard();
 			break;
-		case WAITING:
-			if (Bukkit.getOnlinePlayers().size() < main.getCurrentMap().getMinPlayers())
-			{
-				Collection<? extends Player> list = Bukkit.getOnlinePlayers();
-				for (Player p : list)
-				{
-					p.setLevel(0);
-					ChatUtils.clearTitles(p);
-				}
-				delay = -1;
-			}
-			else
-			{
-				if (delay == -1)
-					delay = 20;
-				Collection<? extends Player> list = Bukkit.getOnlinePlayers();
-				for (Player p : list)
-					p.setLevel(delay);
-				if (delay == 0)
-				{
-					ChatUtils.broadcastBigMessage(" ", 0, 20, 0);
-					ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Début de la partie !", 0, 20, 0);
-					ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + "Début de la partie !");
-					Bukkit.getScheduler().scheduleSyncDelayedTask(main, new Runnable(){
-						@Override
-						public void run()
-						{
-							ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
-							ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Tuez tout les poulets avant qu'ils ne tombent !", 0, 40, 0);
-						}
-					}, 20);
-					selectPlayers();
-					main.setGameState(GameState.IN_GAME);
-					main.updateScoreBoard();
-				}
-				else if (delay % 10 == 0 || delay <= 5)
-				{
-					ChatUtils.broadcastBigMessage("", 0, 20, 0);
-					ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Début de la partie dans " + delay + " secondes", 0, 20, 0);
-					ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + "Début de la partie dans " + delay + " secondes");
-				}
-			}
-			if (delay > 0)
-				delay--;
-			break;
-		case FINISHED:
-			if (delay == 0)
-			{
-				main.setGameState(GameState.WAITING);
-				ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + "Expulsion des joueurs");
-				for (Player p : Bukkit.getOnlinePlayers())
-					p.kickPlayer(ChatColor.RED + "Expulsion du serveur");
-				main.getPlayers().clear();
-				main.loadNextMap();
-			}
-			else if (delay <= 5)
-				ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + "Expulsion des joueurs dans " + delay + " secondes");
-			delay--;
-		case INITIALIZING:
 		default:
 			break;
-		}
-	}
-	
-	private void selectPlayers()
-	{
-		Map<String, Integer> list = main.getPlayers();
-		Set<String> p1 = list.keySet();
-		ArrayList<String> players = new ArrayList<String>();
-		for (String p : p1)
-			players.add(p);
-		for (String player : players)
-		{
-			try{
-				Player p = Bukkit.getPlayer(player);
-				if (p == null)
-				{
-					list.remove(player);
-					continue ;
-				}
-				if (list.get(player) != -1)
-					continue ;
-				int n;
-				do
-				{
-					n = (int)Math.abs((int)Math.abs(random.nextInt()) % main.getCurrentMap().getMaxPlayers());
-				} while (list.containsValue(n));
-				list.remove(player);
-				list.put(player, n);
-				p.teleport(main.getCurrentMap().getGameZones().get(n).getPlayerSpawn());
-				if (!main.getCurrentMap().canPlayersMove())
-					p.setWalkSpeed(0);
-				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
-				BTCInventories.giveGameInventory(p);
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-		for (BTCGameZone zone : main.getCurrentMap().getGameZones())
-		{
-			if (main.getPlayers().containsValue(zone.getUniqueId()))
-				zone.setEnded(false);
-			else
-				zone.setEnded(true);
 		}
 	}
 	

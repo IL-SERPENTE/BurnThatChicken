@@ -104,13 +104,14 @@ public class BTCListener implements Listener
 		ev.setCancelled(true);
 	}
 	
-	@EventHandler
-	public void onChat(AsyncPlayerChatEvent ev)//TODO
+	@EventHandler (ignoreCancelled = true)
+	public void onPlayerChat(AsyncPlayerChatEvent ev)
 	{
-		if (ev.isCancelled())
-			return ;
 		ev.setCancelled(true);
-		Bukkit.broadcastMessage(ChatColor.GRAY + ev.getPlayer().getName() + ": " + ev.getMessage());
+		String msg = ChatColor.GRAY + ev.getPlayer().getDisplayName() + ChatColor.WHITE + ": " + ev.getMessage();
+		for (Player p : Bukkit.getOnlinePlayers())
+			p.sendMessage(msg);
+		Bukkit.getConsoleSender().sendMessage(msg);
 	}
 	
 	@EventHandler

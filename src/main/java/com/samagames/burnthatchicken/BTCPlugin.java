@@ -114,7 +114,7 @@ public class BTCPlugin extends JavaPlugin
 			ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " Fin de la partie");
 			game.setGameState(GameState.FINISHED);
 			game.handleGameEnd();
-			if (ranking.size() < 3)
+			if (ranking.size() <3) //Coeur dans le code OGM OGM OGM
 				api.getGameManager().getCoherenceMachine().getTemplateManager().getPlayerWinTemplate().execute(ranking.get(1).getPlayer());
 			else
 				api.getGameManager().getCoherenceMachine().getTemplateManager().getPlayerLeaderboardWinTemplate().execute(
@@ -252,5 +252,10 @@ public class BTCPlugin extends JavaPlugin
 	public static BTCPlugin getInstance()
 	{
 		return instance;
+	}
+	
+	public SamaGamesAPI getApi()
+	{
+		return api;
 	}
 }

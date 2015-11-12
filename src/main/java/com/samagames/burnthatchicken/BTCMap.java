@@ -1,33 +1,33 @@
 package com.samagames.burnthatchicken;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.samagames.api.SamaGamesAPI;
+import net.samagames.api.games.IGameProperties;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.samagames.burnthatchicken.util.JsonUtils;
 
 public class BTCMap
 {
-	private int maxplayers;
-	private int minplayers;
 	private ArrayList<BTCGameZone> gamezones;
-	private int id;
 	private Location lobby;
 	private boolean move;
 	private boolean jump;
+	private int id;
 	
-	public BTCMap(int maxplayers, int minplayers, Location lobby, boolean move, boolean jump)
+	public BTCMap(Location lobby, boolean move, boolean jump)
 	{
-		this.maxplayers = maxplayers;
-		this.minplayers = minplayers;
-		this.id = 0;
 		this.lobby = lobby;
 		this.move = move;
 		this.jump = jump;
 		gamezones = new ArrayList<BTCGameZone>();
+		id = 0;
 	}
 	
 	public boolean canPlayersJump()
@@ -39,17 +39,7 @@ public class BTCMap
 	{
 		return move;
 	}
-	
-	public int getMaxPlayers()
-	{
-		return maxplayers;
-	}
-	
-	public int getMinPlayers()
-	{
-		return minplayers;
-	}
-	
+
 	public Location getWaitingLobby()
 	{
 		return lobby;
@@ -57,7 +47,9 @@ public class BTCMap
 	
 	public boolean isReady()
 	{
-		return (gamezones.size() >= maxplayers && maxplayers > 0 && maxplayers >= minplayers && minplayers > 0);
+		int max = SamaGamesAPI.get().getGameManager().getGameProperties().getMaxSlots();
+		int min = SamaGamesAPI.get().getGameManager().getGameProperties().getMinSlots();
+		return (gamezones.size() >= max && max > 0 && max >= min && min > 0);
 	}
 	
 	public void addGameZone(Location p, Location s1, Location s2, Location e1, Location e2)
@@ -73,61 +65,29 @@ public class BTCMap
 	
 	public static BTCMap loadMap(BTCPlugin main)
 	{
-		File file = new File("plugins/BurnThatChicken", "map.yml");
-		if (!file.exists())
-			return null;
-		YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
-		String w = yaml.getString("world", null);
-		if (w == null)
-			return null;
-		World world = Bukkit.getWorld(w);
-		if (world == null)
-			return null;
-		int n = yaml.getInt("max_players", -1);
-		int mn = yaml.getInt("min_players", -1);
-		double x = yaml.getDouble("lobby.x");
-		double y = yaml.getDouble("lobby.y");
-		double z = yaml.getDouble("lobby.z");
-		int yaw = yaml.getInt("lobby.yaw");
-		Location lobby = new Location(world, x, y, z);
-		BTCMap g = new BTCMap(n, mn, lobby, yaml.getBoolean("move", false), yaml.getBoolean("jump", false));
+		IGameProperties properties = main.getApi().getGameManager().getGameProperties();
+		Location lobby = JsonUtils.getLocation(properties.getOption("lobby", null));
+		boolean move = properties.getOption("move", new JsonPrimitive(false)).getAsBoolean();
+		boolean jump = properties.getOption("jump", new JsonPrimitive(false)).getAsBoolean();
+		BTCMap g = new BTCMap(lobby, move, jump);
+		
 		for (int j = 0; true; j++)
 		{
-			if (yaml.get("zone-" + j) == null)
+			JsonElement element = properties.getOption("zone-" + j, null);
+			if (element == null)
 				break ;
-			x = yaml.getDouble("zone-" + j + ".spawn.x");
-			y = yaml.getDouble("zone-" + j + ".spawn.y");
-			z = yaml.getDouble("zone-" + j + ".spawn.z");
-			yaw = yaml.getInt("zone-" + j + ".spawn.yaw");
-			Location spawn = new Location(world, x, y, z);
-			spawn.setYaw(yaw);
-
-			x = yaml.getDouble("zone-" + j + ".spawnzone1.x");
-			y = yaml.getDouble("zone-" + j + ".spawnzone1.y");
-			z = yaml.getDouble("zone-" + j + ".spawnzone1.z");
-			Location szone1 = new Location(world, x, y, z);
-
-			x = yaml.getDouble("zone-" + j + ".spawnzone2.x");
-			y = yaml.getDouble("zone-" + j + ".spawnzone2.y");
-			z = yaml.getDouble("zone-" + j + ".spawnzone2.z");
-			Location szone2 = new Location(world, x, y, z);
-
-			x = yaml.getDouble("zone-" + j + ".endzone1.x");
-			y = yaml.getDouble("zone-" + j + ".endzone1.y");
-			z = yaml.getDouble("zone-" + j + ".endzone1.z");
-			Location ezone1 = new Location(world, x, y, z);
-
-			x = yaml.getDouble("zone-" + j + ".endzone2.x");
-			y = yaml.getDouble("zone-" + j + ".endzone2.y");
-			z = yaml.getDouble("zone-" + j + ".endzone2.z");
-			Location ezone2 = new Location(world, x, y, z);
-			
-			g.addGameZone(spawn, szone1, szone2, ezone1, ezone2);
+			Location spawn = JsonUtils.getLocation(element.getAsJsonObject().get("spawn"));
+			Location sz1 = JsonUtils.getLocation(element.getAsJsonObject().get("spawnzone1"));
+			Location sz2 = JsonUtils.getLocation(element.getAsJsonObject().get("spawnzone2"));
+			Location ez1 = JsonUtils.getLocation(element.getAsJsonObject().get("endzone1"));
+			Location ez2 = JsonUtils.getLocation(element.getAsJsonObject().get("endzone2"));
+			g.addGameZone(spawn, sz1, sz2, ez1, ez2);
 		}
+		
 		if (g.isReady())
 			return g;
 		else
-			Bukkit.getLogger().severe("[BTC] Map incorrecte (joueurs max : " + g.getMaxPlayers() + ",joueurs min : " + g.getMinPlayers() + ", zones : " + g.getGameZones().size() + ").");
+			Bukkit.getLogger().severe("[BTC] Map incorrecte ( zones : " + g.getGameZones().size() + ").");
 		return null;
 	}
 	

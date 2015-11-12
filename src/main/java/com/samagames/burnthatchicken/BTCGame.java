@@ -72,7 +72,7 @@ public class BTCGame extends Game<BTCPlayer>
 				BTCGameZone zone;
 				do
 				{
-					n = (int)Math.abs((int)Math.abs(random.nextInt()) % main.getCurrentMap().getMaxPlayers());
+					n = (int)Math.abs((int)Math.abs(random.nextInt()) % gameManager.getGameProperties().getMaxSlots());
 					zone = main.getCurrentMap().getGameZones().get(n);
 				} while (zone.getPlayer() != null);
 				player.setZone(zone);

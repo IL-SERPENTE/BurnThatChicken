@@ -8,13 +8,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
-import com.samagames.burnthatchicken.metadata.MetadataUtils;
 import com.samagames.burnthatchicken.util.ChatUtils;
 import com.samagames.burnthatchicken.util.ParticlesUtils;
 
@@ -39,13 +37,6 @@ public class BTCChickenChecker implements Runnable
 			{
 				if (e.getType() != EntityType.CHICKEN || e.isDead())
 					continue ;
-				Object f = MetadataUtils.getMetaData(main, e, "btc-fake");  
-				if (f != null && f instanceof Integer)
-				{
-					e.teleport(main.getFakeChickens().getChicken((Integer)f));
-					e.setVelocity(new Vector(0, 0, 0));
-					continue ;
-				}
 				ChickenMetadataValue meta = ChickenMetadataValue.getMetadataValueFromChicken(main, e);
 				if (meta == null)
 				{
@@ -81,7 +72,7 @@ public class BTCChickenChecker implements Runnable
 							player.setSpectator();
 							main.addPlayerToRank(player);
 							Player p = player.getPlayerIfOnline();
-							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
+							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + player.getName() + " est éliminé !");
 							if (p != null)
 							{
 								ChatUtils.sendBigMessage(p, "", 0, 100, 0);
@@ -100,8 +91,6 @@ public class BTCChickenChecker implements Runnable
 			for (Entity e : w.getEntities())
 			{
 				if (e.getType() != EntityType.CHICKEN)
-					continue ;
-				if (MetadataUtils.getMetaData(main, e, "btc-fake") != null)
 					continue ;
 				ChickenMetadataValue meta = ChickenMetadataValue.getMetadataValueFromChicken(main, e);
 				if (meta == null)

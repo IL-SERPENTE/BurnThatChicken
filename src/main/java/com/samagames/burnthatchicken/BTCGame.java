@@ -93,6 +93,7 @@ public class BTCGame extends Game<BTCPlayer>
 	@Override
 	public void handleLogout(Player player)
 	{
+		super.handleLogout(player);
 		if (main.getGame().getGameState() == GameState.FINISHED)
 			return ;
 		if (main.getGame().getGameState() == GameState.IN_GAME)

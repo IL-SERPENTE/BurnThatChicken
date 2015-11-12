@@ -9,6 +9,9 @@ import net.samagames.api.SamaGamesAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -16,7 +19,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
-import com.samagames.burnthatchicken.metadata.FakeChickens;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
 import com.samagames.burnthatchicken.task.BTCBackgroundTask;
 import com.samagames.burnthatchicken.task.BTCChickenChecker;
@@ -30,7 +32,6 @@ public class BTCPlugin extends JavaPlugin
 	private static BTCPlugin instance;
 	
 	private BTCListener listener;
-	private FakeChickens fakes;
 	private BTCGame game;
 	
 	private BTCMap map;
@@ -55,14 +56,16 @@ public class BTCPlugin extends JavaPlugin
 		listener = new BTCListener(this);
 		powerups = new ArrayList<PowerUpTask>();
 		ranking = new HashMap<Integer, BTCPlayer>();
-		fakes = new FakeChickens(this);
 		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new BTCBackgroundTask(this), 20, 20);
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new BTCChickenChecker(this), 1, 1);
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new BTCNoSprintTask(this), 1, 1);
 		getServer().getPluginManager().registerEvents(listener, this);
 		
-		fakes.spawnChickens();
+		for (World w : getServer().getWorlds())
+			for (Entity e : w.getEntities())
+				if (e.getType() != EntityType.PLAYER)
+					e.remove();
 		
 		game.setGameState(GameState.WAITING);
 	}
@@ -91,7 +94,7 @@ public class BTCPlugin extends JavaPlugin
 		if (n < 2)
 		{
 			for (BTCPlayer player : list)
-				if (player.isSpectator() || player.isModerator())
+				if (!player.isSpectator() && !player.isModerator())
 				{
 					BTCGameZone zone = player.getZone();
 					zone.setEnded(true);
@@ -228,11 +231,6 @@ public class BTCPlugin extends JavaPlugin
 				powerups.remove(i);
 				return ;
 			}
-	}
-	
-	public FakeChickens getFakeChickens()
-	{
-		return fakes;
 	}
 
 	public BTCPlayer getPlayerByZone(int uniqueId)

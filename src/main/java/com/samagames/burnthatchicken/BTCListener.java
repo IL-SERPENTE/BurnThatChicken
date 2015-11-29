@@ -83,6 +83,12 @@ public class BTCListener implements Listener
 	@EventHandler
 	public void onEntityDamage(EntityDamageEvent ev)
 	{
+		if (main.getGame().getGameState() == GameState.WAITING && ev.getEntity() instanceof Player && ev.getCause() == DamageCause.VOID)
+		{
+			ev.setCancelled(true);
+			ev.getEntity().teleport(main.getCurrentMap().getWaitingLobby());
+			return ;
+		}
 		if (main.getGame().getGameState() != GameState.IN_GAME || ev.getCause() != DamageCause.ENTITY_ATTACK)
 		{
 			ev.setCancelled(true);

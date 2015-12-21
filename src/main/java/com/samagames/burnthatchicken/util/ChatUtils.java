@@ -17,7 +17,8 @@ import org.bukkit.entity.Player;
 
 public class ChatUtils
 {
-	private ChatUtils(){}
+	private ChatUtils(){
+	}
 	
 	public static String getPluginPrefix()
 	{
@@ -55,9 +56,7 @@ public class ChatUtils
 		((CraftPlayer)p).getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(fadein, duration, fadeout));
 	}
 	
-	public static void clearTitles(Player p)
-	{
-		//((CraftPlayer)p).getHandle().playerConnection.sendPacket(new PacketPlayOutTitle(EnumTitleAction.CLEAR, null));
+	public static void clearTitles(Player p) {
 	}
 	
 	public static void setFooterAndHeader(Player player, String footer, String header)

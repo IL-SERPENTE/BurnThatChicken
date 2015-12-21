@@ -13,6 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class BTCInventories
 {
+	private BTCInventories() {
+	}
+	
 	public static void giveGameInventory(Player p)
 	{
 		PlayerInventory inv = p.getInventory();

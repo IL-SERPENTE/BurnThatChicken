@@ -55,32 +55,30 @@ public class BTCChickenChecker implements Runnable
 						ParticlesUtils.sendParticleToPlayers(meta.getSpecialAttribute().getParticle(), (float)x, (float)y, (float)z);
 					}
 					for (BTCGameZone zone : main.getCurrentMap().getGameZones())
-						if (zone.getUniqueId() == meta.getGameZoneId() && !zone.isEnded())
-							if (zone.isInChickenEndZone(e.getLocation()))
-								e.remove();
+						if (zone.getUniqueId() == meta.getGameZoneId() && !zone.isEnded() && zone.isInChickenEndZone(e.getLocation()))
+							e.remove();
 				}
 				else for (BTCGameZone zone : main.getCurrentMap().getGameZones())
 				{
-					if (zone.getUniqueId() == meta.getGameZoneId() && !zone.isEnded())
-						if (zone.isInChickenEndZone(e.getLocation()))
+					if (zone.getUniqueId() == meta.getGameZoneId() && !zone.isEnded() && zone.isInChickenEndZone(e.getLocation()))
+					{
+						zone.setEnded(true);
+						clearChicken(zone);
+						BTCPlayer player = main.getPlayerByZone(zone.getUniqueId());
+						if (player == null)
+							return ;
+						player.setSpectator();
+						main.addPlayerToRank(player);
+						Player p = player.getPlayerIfOnline();
+						ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
+						if (p != null)
 						{
-							zone.setEnded(true);
-							clearChicken(zone);
-							BTCPlayer player = main.getPlayerByZone(zone.getUniqueId());
-							if (player == null)
-								return ;
-							player.setSpectator();
-							main.addPlayerToRank(player);
-							Player p = player.getPlayerIfOnline();
-							ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
-							if (p != null)
-							{
-								ChatUtils.sendBigMessage(p, "", 0, 100, 0);
-								ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
-							}
-							main.checkPlayers();
-							main.updateScoreBoard();
+							ChatUtils.sendBigMessage(p, "", 0, 100, 0);
+							ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
 						}
+						main.checkPlayers();
+						main.updateScoreBoard();
+					}
 				}
 			}
 	}
@@ -93,12 +91,7 @@ public class BTCChickenChecker implements Runnable
 				if (e.getType() != EntityType.CHICKEN)
 					continue ;
 				ChickenMetadataValue meta = ChickenMetadataValue.getMetadataValueFromChicken(main, e);
-				if (meta == null)
-				{
-					e.remove();
-					continue ;
-				}
-				if (btcGameZone.getUniqueId() == meta.getGameZoneId())
+				if (meta == null || btcGameZone.getUniqueId() == meta.getGameZoneId())
 					e.remove();
 			}
 	}

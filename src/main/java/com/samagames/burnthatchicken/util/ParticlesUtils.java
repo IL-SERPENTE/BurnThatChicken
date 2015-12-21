@@ -9,6 +9,9 @@ import org.bukkit.entity.Player;
 
 public class ParticlesUtils
 {
+	private ParticlesUtils() {
+	}
+	
 	public static void sendParticleToPlayers(EnumParticle particule, float x, float y, float z)
 	{
 		PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(particule, true, x, y, z, 0F, 0F, 0F, 0F, 1, 1);

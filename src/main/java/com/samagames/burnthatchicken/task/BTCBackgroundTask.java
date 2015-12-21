@@ -12,6 +12,7 @@ import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
+import com.samagames.burnthatchicken.util.GameState;
 
 public class BTCBackgroundTask implements Runnable
 {
@@ -32,30 +33,23 @@ public class BTCBackgroundTask implements Runnable
 	@Override
 	public void run()
 	{
-		switch(main.getGame().getGameState())
+		if (main.getGame().getGameState() != GameState.IN_GAME)
+			return ;
+		
+		int r = 0;
+		for (int i = 0; i < delays.length; i++)
 		{
-		case IN_GAME:
-			int r = 0;
-			for (int i = 0; i < delays.length; i++)
+			if (delay == r)
 			{
-				if (delay == r)
-				{
-					this.spawnChickens();
-					break;
-				}
-				r += delays[i];
+				this.spawnChickens();
+				break;
 			}
-			if (delay > r)
-			{
-				if ((delay - r) % 2 == 0 || random.nextInt(10) < 7)
-					this.spawnChickens();
-			}
-			delay++;
-			main.updateScoreBoard();
-			break;
-		default:
-			break;
+			r += delays[i];
 		}
+		if (delay > r && ((delay - r) % 2 == 0 || random.nextInt(10) < 7))
+			this.spawnChickens();
+		delay++;
+		main.updateScoreBoard();
 	}
 	
 	public void setDelay(int d)

@@ -22,7 +22,7 @@ public class ChickenMetadataValue
 	
 	public boolean isSpecial()
 	{
-		return (special != null);
+		return special != null;
 	}
 	
 	public SpecialChicken getSpecialAttribute()

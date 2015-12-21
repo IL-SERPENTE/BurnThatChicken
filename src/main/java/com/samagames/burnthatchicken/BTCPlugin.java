@@ -39,11 +39,14 @@ public class BTCPlugin extends JavaPlugin
 	private HashMap<Integer, BTCPlayer> ranking;
 	private ArrayList<PowerUpTask> powerups;
 	
+	public BTCPlugin()
+	{
+		instance = this;
+	}
+	
 	@Override
 	public void onEnable()
 	{
-		instance = this;
-		
 		game = new BTCGame(this);
 		api = SamaGamesAPI.get();
 		api.getGameManager().registerGame(game);

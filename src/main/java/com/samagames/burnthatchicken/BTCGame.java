@@ -20,24 +20,24 @@ import com.samagames.burnthatchicken.util.GameState;
 
 public class BTCGame extends Game<BTCPlayer>
 {
-	private GameState game_state;
+	private GameState gamestate;
 	private BTCPlugin main;
 	
 	public BTCGame(BTCPlugin plugin)
 	{
-		super("burnthatchicken", "BurnThatChicken", BTCPlayer.class);
-		game_state = GameState.INITIALIZING;
+		super("burnthatchicken", "BurnThatChicken", "", BTCPlayer.class);
+		gamestate = GameState.INITIALIZING;
 		main = plugin;
 	}
 
 	public GameState getGameState()
 	{
-		return game_state;
+		return gamestate;
 	}
 	
 	public void setGameState(GameState gs)
 	{
-		game_state = gs;
+		gamestate = gs;
 	}
 	
 	@Override
@@ -54,25 +54,22 @@ public class BTCGame extends Game<BTCPlayer>
 		main.updateScoreBoard();
 	}
 	
-	private void selectPlayers()//TODO
+	private void selectPlayers()
 	{
 		Random random = new Random();
 		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
 		list.addAll(getInGamePlayers().values());
 		for (BTCPlayer player : list)
 		{
-			try{
+			try {
 				Player p = player.getPlayerIfOnline();
 				if (p == null)
-				{
-					list.remove(player);
 					continue ;
-				}
 				int n;
 				BTCGameZone zone;
 				do
 				{
-					n = (int)Math.abs((int)Math.abs(random.nextInt()) % gameManager.getGameProperties().getMaxSlots());
+					n = Math.abs(random.nextInt() % gameManager.getGameProperties().getMaxSlots());
 					zone = main.getCurrentMap().getGameZones().get(n);
 				} while (zone.getPlayer() != null);
 				player.setZone(zone);
@@ -82,7 +79,7 @@ public class BTCGame extends Game<BTCPlayer>
 					p.setWalkSpeed(0);
 				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
 				BTCInventories.giveGameInventory(p);
-			}catch(Exception e){
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}

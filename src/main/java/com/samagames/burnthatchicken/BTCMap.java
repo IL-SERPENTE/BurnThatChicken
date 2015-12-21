@@ -49,7 +49,7 @@ public class BTCMap
 	{
 		int max = SamaGamesAPI.get().getGameManager().getGameProperties().getMaxSlots();
 		int min = SamaGamesAPI.get().getGameManager().getGameProperties().getMinSlots();
-		return (gamezones.size() >= max && max > 0 && max >= min && min > 0);
+		return gamezones.size() >= max && max >= min && min > 0;
 	}
 	
 	public void addGameZone(Location p, Location s1, Location s2, Location e1, Location e2)
@@ -71,7 +71,8 @@ public class BTCMap
 		boolean jump = properties.getOption("jump", new JsonPrimitive(false)).getAsBoolean();
 		BTCMap g = new BTCMap(lobby, move, jump);
 		
-		for (int j = 0; true; j++)
+		int j = 0;
+		while (true)
 		{
 			JsonElement element = properties.getOption("zone-" + j, null);
 			if (element == null)
@@ -82,6 +83,7 @@ public class BTCMap
 			Location ez1 = JsonUtils.getLocation(element.getAsJsonObject().get("endzone1"));
 			Location ez2 = JsonUtils.getLocation(element.getAsJsonObject().get("endzone2"));
 			g.addGameZone(spawn, sz1, sz2, ez1, ez2);
+			j++;
 		}
 		
 		if (g.isReady())
@@ -131,9 +133,9 @@ public class BTCMap
 		
 		public boolean isInChickenEndZone(Location loc)
 		{
-			if ((loc.getX() >= endzone[0].getX() && loc.getX() <= endzone[1].getX()) || (loc.getX() >= endzone[1].getX() && loc.getX() <= endzone[0].getX()))
-				if ((loc.getY() >= endzone[0].getY() && loc.getY() <= endzone[1].getY()) || (loc.getY() >= endzone[1].getY() && loc.getY() <= endzone[0].getY()))
-					if ((loc.getZ() >= endzone[0].getZ() && loc.getZ() <= endzone[1].getZ()) || (loc.getZ() >= endzone[1].getZ() && loc.getZ() <= endzone[0].getZ()))
+			if (((loc.getX() >= endzone[0].getX() && loc.getX() <= endzone[1].getX()) || (loc.getX() >= endzone[1].getX() && loc.getX() <= endzone[0].getX()))
+				&& ((loc.getY() >= endzone[0].getY() && loc.getY() <= endzone[1].getY()) || (loc.getY() >= endzone[1].getY() && loc.getY() <= endzone[0].getY()))
+					&& ((loc.getZ() >= endzone[0].getZ() && loc.getZ() <= endzone[1].getZ()) || (loc.getZ() >= endzone[1].getZ() && loc.getZ() <= endzone[0].getZ())))
 						return true;
 			return false;
 		}

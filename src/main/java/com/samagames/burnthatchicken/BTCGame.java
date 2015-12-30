@@ -41,16 +41,16 @@ public class BTCGame extends Game<BTCPlayer> {
 	public void startGame() {
 		super.startGame();
 		Bukkit.getScheduler()
-				.scheduleSyncDelayedTask(
-						main,
-						() -> {
-							ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
-							ChatUtils
-									.broadcastSmallMessage(
-											ChatColor.GOLD
-													+ "Tuez tout les poulets avant qu'ils ne tombent !",
-											0, 40, 0);
-						}, 20);
+		.scheduleSyncDelayedTask(
+				main,
+				() -> {
+					ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
+					ChatUtils
+					.broadcastSmallMessage(
+							ChatColor.GOLD
+							+ "Tuez tout les poulets avant qu'ils ne tombent !",
+							0, 40, 0);
+				}, 20);
 		selectPlayers();
 		main.getGame().setGameState(GameState.IN_GAME);
 		main.updateScoreBoard();
@@ -81,7 +81,8 @@ public class BTCGame extends Game<BTCPlayer> {
 						Integer.MAX_VALUE, 128));
 				BTCInventories.giveGameInventory(p);
 			} catch (Exception e) {
-				main.getServer().getLogger().log(Level.SEVERE, e.getMessage(), e);
+				main.getServer().getLogger()
+				.log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 		for (BTCGameZone zone : main.getCurrentMap().getGameZones())

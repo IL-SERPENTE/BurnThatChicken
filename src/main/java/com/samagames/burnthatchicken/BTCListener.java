@@ -173,7 +173,7 @@ public class BTCListener implements Listener {
 				|| ev.getEntity().getShooter() == null
 				|| !(ev.getEntity().getShooter() instanceof Player)
 				|| MetadataUtils
-						.getMetaData(main, ev.getEntity(), "btc-arrow2") != null)
+				.getMetaData(main, ev.getEntity(), "btc-arrow2") != null)
 			return;
 		if (main.getGame().getGameState() != GameState.IN_GAME)
 			ev.setCancelled(true);

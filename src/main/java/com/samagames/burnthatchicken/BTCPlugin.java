@@ -3,6 +3,7 @@ package com.samagames.burnthatchicken;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.samagames.api.SamaGamesAPI;
@@ -83,30 +84,30 @@ public class BTCPlugin extends JavaPlugin {
 	public void checkPlayers() {
 		int n = 0;
 		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
-		list.addAll(game.getInGamePlayers().values());
-		for (BTCPlayer player : list) {
+		for (BTCPlayer player : game.getInGamePlayers().values()) {
 			if (player.isSpectator() || player.isModerator())
 				continue;
 			n++;
+			list.add(player);
 		}
 		if (n < 2) {
-			for (BTCPlayer player : list)
-				if (!player.isSpectator() && !player.isModerator()) {
-					BTCGameZone zone = player.getZone();
-					zone.setEnded(true);
-					BTCChickenChecker.getInstance().clearChicken(zone);
-					player.setSpectator();
-					addPlayerToRank(player);
-				}
-			for (int p : ranking.keySet()) {
-				BTCPlayer who = ranking.get(p);
+			for (BTCPlayer player : list) {
+				BTCGameZone zone = player.getZone();
+				zone.setEnded(true);
+				BTCChickenChecker.getInstance().clearChicken(zone);
+				player.setSpectator();
+				addPlayerToRank(player);
+			}
+			for (Entry<Integer, BTCPlayer> entry : ranking.entrySet()) {
+				BTCPlayer who = entry.getValue();
 				Player player = who.getPlayerIfOnline();
 				if (player != null) {
 					ChatUtils.sendSmallMessage(player, ChatColor.AQUA
-							+ "Tu es " + p + (p == 1 ? "er" : "e"), 0, 100, 0);
-					if (p == 1)
-						who.addStars(1, "Victoire");
+							+ "Tu es " + entry.getKey()
+							+ (entry.getKey() == 1 ? "er" : "e"), 0, 100, 0);
 				}
+				if (entry.getKey() == 1)
+					who.addStars(1, "Victoire");
 			}
 			ChatUtils.broadcastBigMessage(ChatColor.GOLD + "Fin de la partie",
 					0, 100, 0);
@@ -142,28 +143,15 @@ public class BTCPlugin extends JavaPlugin {
 	}
 
 	public void updateScoreBoard() {
-		int n = 0;
-		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
-		list.addAll(game.getInGamePlayers().values());
-		for (BTCPlayer player : list) {
-			if (player.isSpectator() || player.isModerator())
-				continue;
-			n++;
-		}
+		int n = game.getInGamePlayers().size();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Scoreboard sc = Bukkit.getScoreboardManager().getNewScoreboard();
 			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "≡ BTC ≡",
 					"dummy");
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			obj.getScore("").setScore(-1);
-			if (game.getGameState() == GameState.WAITING)
-				obj.getScore(
-						ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE
-								+ list.size()).setScore(-2);
-			else
-				obj.getScore(
-						ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n)
-						.setScore(-2);
+			obj.getScore(ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n)
+					.setScore(-2);
 			obj.getScore(" ").setScore(-3);
 			if (game.getGameState() == GameState.IN_GAME
 					|| game.getGameState() == GameState.FINISHED) {
@@ -176,7 +164,7 @@ public class BTCPlugin extends JavaPlugin {
 								+ (sec < 10 ? "0" : "") + sec).setScore(-4);
 				obj.getScore("  ").setScore(-5);
 				BTCPlayer player = game.getPlayer(p.getUniqueId());
-				if (player != null) {
+				if (player != null && !player.isModerator()) {
 					obj.getScore(
 							ChatColor.GRAY + "Poulets : " + ChatColor.WHITE
 									+ player.getChickens()).setScore(-6);

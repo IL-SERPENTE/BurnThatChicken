@@ -91,20 +91,12 @@ public class BTCBackgroundTask implements Runnable {
 		double z = random.nextDouble() * Math.abs(l1.getZ() - l2.getZ())
 				+ Math.min(l1.getZ(), l2.getZ());
 		Location newLoc = new Location(l1.getWorld(), x, y, z);
-		if (newLoc.getWorld().getBlockAt(newLoc).getType() != Material.AIR)
-			return randomLocationInZone(l1, l2);
-		if (newLoc.getWorld().getBlockAt(newLoc.clone().add(0.3, 0, 0))
-				.getType() != Material.AIR)
-			return randomLocationInZone(l1, l2);
-		if (newLoc.getWorld().getBlockAt(newLoc.clone().add(0, 0, 0.3))
-				.getType() != Material.AIR)
-			return randomLocationInZone(l1, l2);
-		if (newLoc.getWorld().getBlockAt(newLoc.clone().add(-0.3, 0, 0))
-				.getType() != Material.AIR)
-			return randomLocationInZone(l1, l2);
-		if (newLoc.getWorld().getBlockAt(newLoc.clone().add(0, 0, -0.3))
-				.getType() != Material.AIR)
-			return randomLocationInZone(l1, l2);
+
+		for (double xc = -0.3D; xc <= 0.3D; xc += 0.3D)
+			for (double zc = -0.3D; zc <= 0.3D; zc += 0.3D)
+				if (newLoc.getWorld().getBlockAt(newLoc.clone().add(xc, 0, zc))
+						.getType() != Material.AIR)
+					return randomLocationInZone(l1, l2);
 		return newLoc;
 	}
 

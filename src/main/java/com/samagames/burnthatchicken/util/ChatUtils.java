@@ -3,6 +3,7 @@ package com.samagames.burnthatchicken.util;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent.ChatSerializer;
@@ -73,7 +74,7 @@ public class ChatUtils {
 			field.set(packet, footercomp);
 			field.setAccessible(false);
 		} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
-			Bukkit.getLogger().severe(e.getMessage());
+			Bukkit.getLogger().log(Level.SEVERE, e.getMessage(), e);
 		}
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 	}

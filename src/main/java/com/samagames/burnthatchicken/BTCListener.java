@@ -45,7 +45,7 @@ public class BTCListener implements Listener {
 				|| !(ev.getDamager() instanceof Arrow)
 				|| !(ev.getEntity() instanceof Chicken)) {
 			ev.setCancelled(true);
-			return;
+			return ;
 		}
 		Arrow arrow = (Arrow) ev.getDamager();
 		Chicken chicken = (Chicken) ev.getEntity();
@@ -54,17 +54,13 @@ public class BTCListener implements Listener {
 		if (data == null || arrow.getShooter() == null
 				|| !(arrow.getShooter() instanceof Player)) {
 			ev.setCancelled(true);
-			return;
+			return ;
 		}
 		Player shooter = (Player) arrow.getShooter();
 		BTCPlayer player = main.getGame().getPlayer(shooter.getUniqueId());
-		if (player == null) {
+		if (player == null || player.getZone().getUniqueId() != data.getGameZoneId()) {
 			ev.setCancelled(true);
-			return;
-		}
-		if (player.getZone().getUniqueId() != data.getGameZoneId()) {
-			ev.setCancelled(true);
-			return;
+			return ;
 		}
 		chicken.setHealth(0);
 		arrow.remove();

@@ -1,6 +1,7 @@
 package com.samagames.burnthatchicken;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.samagames.api.SamaGamesAPI;
@@ -132,17 +133,26 @@ public class BTCMap {
 		}
 
 		public boolean isInChickenEndZone(Location loc) {
-			if (((loc.getX() >= endzone[0].getX() && loc.getX() <= endzone[1]
-					.getX()) || (loc.getX() >= endzone[1].getX() && loc.getX() <= endzone[0]
-					.getX()))
-					&& ((loc.getY() >= endzone[0].getY() && loc.getY() <= endzone[1]
-							.getY()) || (loc.getY() >= endzone[1].getY() && loc
-							.getY() <= endzone[0].getY()))
-					&& ((loc.getZ() >= endzone[0].getZ() && loc.getZ() <= endzone[1]
-							.getZ()) || (loc.getZ() >= endzone[1].getZ() && loc
-							.getZ() <= endzone[0].getZ())))
-				return true;
-			return false;
+			double[] dim = new double[2];
+
+			dim[0] = endzone[0].getX();
+			dim[1] = endzone[1].getX();
+			Arrays.sort(dim);
+			if (loc.getX() > dim[1] || loc.getX() < dim[0])
+				return false;
+			dim[0] = endzone[0].getZ();
+			dim[1] = endzone[1].getZ();
+			Arrays.sort(dim);
+			if (loc.getZ() > dim[1] || loc.getZ() < dim[0])
+				return false;
+
+			dim[0] = endzone[0].getY();
+			dim[1] = endzone[1].getY();
+			Arrays.sort(dim);
+			if (loc.getY() > dim[1] || loc.getY() < dim[0])
+				return false;
+
+			return true;
 		}
 
 		public void setEnded(boolean e) {

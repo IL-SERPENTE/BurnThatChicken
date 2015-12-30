@@ -3,6 +3,7 @@ package com.samagames.burnthatchicken;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 import net.samagames.api.games.Game;
 
@@ -80,7 +81,7 @@ public class BTCGame extends Game<BTCPlayer> {
 						Integer.MAX_VALUE, 128));
 				BTCInventories.giveGameInventory(p);
 			} catch (Exception e) {
-				main.getServer().getLogger().severe(e.getMessage());
+				main.getServer().getLogger().log(Level.SEVERE, e.getMessage(), e);
 			}
 		}
 		for (BTCGameZone zone : main.getCurrentMap().getGameZones())

@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.task.BTCBackgroundTask;
@@ -56,15 +55,10 @@ public enum SpecialChicken {
 			break;
 		case MORE_CHICKENS:
 			BTCBackgroundTask task = BTCBackgroundTask.getInstance();
-			BTCGameZone zone = player.getZone();
-			if (zone == null)
-				return;
-			task.spawnChicken(zone, false);
-			task.spawnChicken(zone, false);
-			task.spawnChicken(zone, false);
-			break;
-		case DOUBLE_ARROW:
-			// case SPEED_ARROW:
+			if (player.getZone() != null)
+				for (int i = 0; i < 3; i++)
+					task.spawnChicken(player.getZone(), false);
+			break ;
 		default:
 			break;
 		}

@@ -18,58 +18,57 @@ import com.samagames.burnthatchicken.util.BTCInventories;
 import com.samagames.burnthatchicken.util.ChatUtils;
 import com.samagames.burnthatchicken.util.GameState;
 
-public class BTCGame extends Game<BTCPlayer>
-{
+public class BTCGame extends Game<BTCPlayer> {
 	private GameState gamestate;
 	private BTCPlugin main;
-	
-	public BTCGame(BTCPlugin plugin)
-	{
+
+	public BTCGame(BTCPlugin plugin) {
 		super("burnthatchicken", "BurnThatChicken", "", BTCPlayer.class);
 		gamestate = GameState.INITIALIZING;
 		main = plugin;
 	}
 
-	public GameState getGameState()
-	{
+	public GameState getGameState() {
 		return gamestate;
 	}
-	
-	public void setGameState(GameState gs)
-	{
+
+	public void setGameState(GameState gs) {
 		gamestate = gs;
 	}
-	
+
 	@Override
-	public void startGame()
-	{
+	public void startGame() {
 		super.startGame();
-		Bukkit.getScheduler().scheduleSyncDelayedTask(main, () ->
-			{
-				ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
-				ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Tuez tout les poulets avant qu'ils ne tombent !", 0, 40, 0);
-			}, 20);
+		Bukkit.getScheduler()
+				.scheduleSyncDelayedTask(
+						main,
+						() -> {
+							ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
+							ChatUtils
+									.broadcastSmallMessage(
+											ChatColor.GOLD
+													+ "Tuez tout les poulets avant qu'ils ne tombent !",
+											0, 40, 0);
+						}, 20);
 		selectPlayers();
 		main.getGame().setGameState(GameState.IN_GAME);
 		main.updateScoreBoard();
 	}
-	
-	private void selectPlayers()
-	{
+
+	private void selectPlayers() {
 		Random random = new Random();
 		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
 		list.addAll(getInGamePlayers().values());
-		for (BTCPlayer player : list)
-		{
+		for (BTCPlayer player : list) {
 			try {
 				Player p = player.getPlayerIfOnline();
 				if (p == null)
-					continue ;
+					continue;
 				int n;
 				BTCGameZone zone;
-				do
-				{
-					n = Math.abs(random.nextInt() % gameManager.getGameProperties().getMaxSlots());
+				do {
+					n = Math.abs(random.nextInt()
+							% gameManager.getGameProperties().getMaxSlots());
 					zone = main.getCurrentMap().getGameZones().get(n);
 				} while (zone.getPlayer() != null);
 				player.setZone(zone);
@@ -77,31 +76,29 @@ public class BTCGame extends Game<BTCPlayer>
 				p.teleport(zone.getPlayerSpawn());
 				if (!main.getCurrentMap().canPlayersMove())
 					p.setWalkSpeed(0);
-				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
+				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
+						Integer.MAX_VALUE, 128));
 				BTCInventories.giveGameInventory(p);
-			} catch(Exception e) {
-				e.printStackTrace();
+			} catch (Exception e) {
+				main.getServer().getLogger().severe(e.getMessage());
 			}
 		}
 		for (BTCGameZone zone : main.getCurrentMap().getGameZones())
 			zone.setEnded(zone.getPlayer() == null);
 	}
-	
+
 	@Override
-	public void handleLogout(Player player)
-	{
+	public void handleLogout(Player player) {
 		super.handleLogout(player);
 		if (main.getGame().getGameState() == GameState.FINISHED)
-			return ;
-		if (main.getGame().getGameState() == GameState.IN_GAME)
-		{
+			return;
+		if (main.getGame().getGameState() == GameState.IN_GAME) {
 
 			BTCPlayer btc = main.getGame().getPlayer(player.getUniqueId());
 			if (btc == null)
-				return ;
+				return;
 			main.addPlayerToRank(btc);
-			if (btc.getZone() != null)
-			{
+			if (btc.getZone() != null) {
 				btc.getZone().setEnded(true);
 				BTCChickenChecker.getInstance().clearChicken(btc.getZone());
 			}

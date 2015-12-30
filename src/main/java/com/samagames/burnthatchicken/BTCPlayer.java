@@ -11,14 +11,12 @@ import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.util.BTCInventories;
 import com.samagames.burnthatchicken.util.ChatUtils;
 
-public class BTCPlayer extends GamePlayer
-{
+public class BTCPlayer extends GamePlayer {
 	private Player player;
 	private BTCGameZone zone;
 	private int chickens;
-	
-	public BTCPlayer(Player player)
-	{
+
+	public BTCPlayer(Player player) {
 		super(player);
 		this.player = player;
 		zone = null;
@@ -26,10 +24,11 @@ public class BTCPlayer extends GamePlayer
 	}
 
 	@Override
-	public void handleLogin(boolean reconnect)
-	{
+	public void handleLogin(boolean reconnect) {
 		BTCPlugin main = BTCPlugin.getInstance();
-		ChatUtils.setFooterAndHeader(player, ChatColor.AQUA + "" + ChatColor.BOLD + "BurnThatChicken", ChatColor.GOLD + "" + ChatColor.BOLD + "SamaGames");
+		ChatUtils.setFooterAndHeader(player, ChatColor.AQUA + ""
+				+ ChatColor.BOLD + "BurnThatChicken", ChatColor.GOLD + ""
+				+ ChatColor.BOLD + "SamaGames");
 		player.setMaxHealth(20);
 		player.setHealth(20);
 		player.setFoodLevel(20);
@@ -42,46 +41,39 @@ public class BTCPlayer extends GamePlayer
 		BTCInventories.giveLobbyInventory(player);
 		main.updateScoreBoard();
 	}
-	
+
 	@Override
-	public void setSpectator()
-	{
+	public void setSpectator() {
 		super.setSpectator();
 		player.setWalkSpeed(0.2F);
 		player.removePotionEffect(PotionEffectType.JUMP);
 		player.setGameMode(GameMode.SPECTATOR);
 		player.getInventory().clear();
 	}
-	
-	public BTCGameZone getZone()
-	{
+
+	public BTCGameZone getZone() {
 		return zone;
 	}
-	
-	public void setZone(BTCGameZone zone)
-	{
+
+	public void setZone(BTCGameZone zone) {
 		this.zone = zone;
 	}
-	
-	public int getChickens()
-	{
+
+	public int getChickens() {
 		return chickens;
 	}
-	
-	public void addChicken()
-	{
+
+	public void addChicken() {
 		chickens++;
 		if (chickens % 5 == 0)
 			this.addCoins(1, "5 poulets tués");
 	}
-	
-	public String getName()
-	{
+
+	public String getName() {
 		return player.getName();
 	}
 
-	public Player getPlayer()
-	{
+	public Player getPlayer() {
 		return player;
 	}
 }

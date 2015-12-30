@@ -4,20 +4,17 @@ import com.samagames.burnthatchicken.BTCPlayer;
 import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.util.GameState;
 
-public class BTCNoSprintTask implements Runnable
-{
+public class BTCNoSprintTask implements Runnable {
 	private BTCPlugin main;
-	
-	public BTCNoSprintTask(BTCPlugin btcPlugin)
-	{
+
+	public BTCNoSprintTask(BTCPlugin btcPlugin) {
 		main = btcPlugin;
 	}
 
 	@Override
-	public void run()
-	{
+	public void run() {
 		if (main.getGame().getGameState() == GameState.WAITING)
-			return ;
+			return;
 		for (BTCPlayer player : main.getGame().getInGamePlayers().values())
 			if (player.isOnline())
 				player.getPlayerIfOnline().setSprinting(false);

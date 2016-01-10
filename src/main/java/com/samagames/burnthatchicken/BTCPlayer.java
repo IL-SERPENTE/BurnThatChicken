@@ -9,7 +9,6 @@ import org.bukkit.potion.PotionEffectType;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.util.BTCInventories;
-import com.samagames.burnthatchicken.util.ChatUtils;
 
 public class BTCPlayer extends GamePlayer {
 	private Player player;
@@ -26,9 +25,6 @@ public class BTCPlayer extends GamePlayer {
 	@Override
 	public void handleLogin(boolean reconnect) {
 		BTCPlugin main = BTCPlugin.getInstance();
-		ChatUtils.setFooterAndHeader(player, ChatColor.AQUA + ""
-				+ ChatColor.BOLD + "BurnThatChicken", ChatColor.GOLD + ""
-				+ ChatColor.BOLD + "SamaGames");
 		player.setMaxHealth(20);
 		player.setHealth(20);
 		player.setFoodLevel(20);

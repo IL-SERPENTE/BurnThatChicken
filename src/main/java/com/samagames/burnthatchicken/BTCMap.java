@@ -52,6 +52,7 @@ public class BTCMap {
 	public void addGameZone(Location p, Location s1, Location s2, Location e1,
 			Location e2) {
 		gamezones.add(new BTCGameZone(id, p, s1, s2, e1, e2));
+		Bukkit.getLogger().info("GameZone " + id + " added.");
 		id++;
 	}
 
@@ -75,6 +76,7 @@ public class BTCMap {
 			JsonElement element = properties.getConfig("zone-" + j, null);
 			if (element == null)
 				break;
+			try {
 			Location spawn = JsonUtils.getLocation(element.getAsJsonObject()
 					.get("spawn"));
 			Location sz1 = JsonUtils.getLocation(element.getAsJsonObject().get(
@@ -86,6 +88,7 @@ public class BTCMap {
 			Location ez2 = JsonUtils.getLocation(element.getAsJsonObject().get(
 					"endzone2"));
 			g.addGameZone(spawn, sz1, sz2, ez1, ez2);
+			} catch (Exception e){e.printStackTrace();}
 			j++;
 		}
 

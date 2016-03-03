@@ -62,17 +62,17 @@ public class BTCMap {
 	public static BTCMap loadMap(BTCPlugin main) {
 		IGameProperties properties = main.getApi().getGameManager()
 				.getGameProperties();
-		Location lobby = JsonUtils.getLocation(properties.getOption("lobby",
+		Location lobby = JsonUtils.getLocation(properties.getConfig("lobby",
 				null));
-		boolean move = properties.getOption("move", new JsonPrimitive(false))
+		boolean move = properties.getConfig("move", new JsonPrimitive(false))
 				.getAsBoolean();
-		boolean jump = properties.getOption("jump", new JsonPrimitive(false))
+		boolean jump = properties.getConfig("jump", new JsonPrimitive(false))
 				.getAsBoolean();
 		BTCMap g = new BTCMap(lobby, move, jump);
 
 		int j = 0;
 		while (true) {
-			JsonElement element = properties.getOption("zone-" + j, null);
+			JsonElement element = properties.getConfig("zone-" + j, null);
 			if (element == null)
 				break;
 			Location spawn = JsonUtils.getLocation(element.getAsJsonObject()

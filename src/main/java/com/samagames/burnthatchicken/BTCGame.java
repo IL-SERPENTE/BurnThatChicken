@@ -18,10 +18,12 @@ import com.samagames.burnthatchicken.task.BTCChickenChecker;
 import com.samagames.burnthatchicken.util.BTCInventories;
 import com.samagames.burnthatchicken.util.ChatUtils;
 import com.samagames.burnthatchicken.util.GameState;
+import org.bukkit.scheduler.BukkitTask;
 
 public class BTCGame extends Game<BTCPlayer> {
 	private GameState gamestate;
 	private BTCPlugin main;
+	private BukkitTask gameTime;
 
 	public BTCGame(BTCPlugin plugin) {
 		super("burnthatchicken", "BurnThatChicken", "", BTCPlayer.class);
@@ -53,7 +55,28 @@ public class BTCGame extends Game<BTCPlayer> {
 				}, 20);
 		selectPlayers();
 		main.getGame().setGameState(GameState.IN_GAME);
-		main.updateScoreBoard();
+		this.gameTime = this.main.getServer().getScheduler().runTaskTimerAsynchronously(this.main, new Runnable()
+		{
+			private int time = 0;
+
+			@Override
+			public void run()
+			{
+				this.time++;
+				for (BTCPlayer arena : gamePlayers.values())
+					arena.setScoreboardTime(this.formatTime(time));
+			}
+
+			public String formatTime(int time)
+			{
+				int mins = time / 60;
+				int secs = time - mins * 60;
+
+				String secsSTR = (secs < 10) ? "0" + Integer.toString(secs) : Integer.toString(secs);
+
+				return mins + ":" + secsSTR;
+			}
+		}, 0L, 20L);
 	}
 
 	private void selectPlayers() {
@@ -80,6 +103,7 @@ public class BTCGame extends Game<BTCPlayer> {
 				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,
 						Integer.MAX_VALUE, 128));
 				BTCInventories.giveGameInventory(p);
+				player.setScoreboard();
 			} catch (Exception e) {
 				main.getServer().getLogger()
 				.log(Level.SEVERE, e.getMessage(), e);
@@ -106,6 +130,5 @@ public class BTCGame extends Game<BTCPlayer> {
 			}
 			main.checkPlayers();
 		}
-		main.updateScoreBoard();
 	}
 }

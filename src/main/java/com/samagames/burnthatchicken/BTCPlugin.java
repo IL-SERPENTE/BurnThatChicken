@@ -14,9 +14,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
 import com.samagames.burnthatchicken.BTCMap.BTCGameZone;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
@@ -139,56 +136,6 @@ public class BTCPlugin extends JavaPlugin {
 		}
 	}
 
-	public void updateScoreBoard() {
-	    if (game.getGameState() != GameState.IN_GAME && game.getGameState() != GameState.FINISHED)
-	        return;
-	  
-		int n = game.getInGamePlayers().size();
-		for (Player p : getServer().getOnlinePlayers()) {
-			Scoreboard sc = getServer().getScoreboardManager().getNewScoreboard();
-			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "BTC", "dummy");
-			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
-			obj.getScore("").setScore(-1);
-			obj.getScore(ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n).setScore(-2);
-
-			BTCPlayer player = game.getPlayer(p.getUniqueId());
-			
-			if (player != null && !player.isModerator()) {
-				obj.getScore(ChatColor.GRAY + "Poulets : " + ChatColor.WHITE + player.getChickens()).setScore(-3);
-				obj.getScore("   ").setScore(-4);
-				
-				obj.getScore(ChatColor.GRAY + "Bonus :").setScore(-5);
-				boolean ok = false;
-				int i = -6;
-				
-				for (SpecialChicken sp : SpecialChicken.values()) {
-					if (this.hasPowerUp(p.getUniqueId(), sp)) {
-						obj.getScore(sp.getName()).setScore(i);
-						i--;
-						ok = true;
-					}
-				}
-				
-				if (!ok) {
-				    obj.getScore("Aucun").setScore(i);
-				    i--;
-				}
-					
-				obj.getScore("    ").setScore(i);
-				
-				int time = BTCBackgroundTask.getInstance().getDelay();
-				int min = time / 60;
-				int sec = time % 60;
-				obj.getScore(
-						ChatColor.GRAY + "Temps : " + ChatColor.WHITE
-								+ (min < 10 ? "0" : "") + min + ":"
-								+ (sec < 10 ? "0" : "") + sec).setScore(i--);
-			}
-			
-			p.setScoreboard(sc);
-		}
-	}
-
 	public void addPowerUp(UUID player, SpecialChicken powerup, int duration) {
 		if (duration != -1) {
 			PowerUpTask task = new PowerUpTask(this, player, powerup);
@@ -242,5 +189,10 @@ public class BTCPlugin extends JavaPlugin {
 
 	public SamaGamesAPI getApi() {
 		return api;
+	}
+
+	//public void updateScoreBoard()
+	{
+		//this.getGame().getInGamePlayers().forEach();
 	}
 }

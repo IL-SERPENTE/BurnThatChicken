@@ -44,7 +44,6 @@ public class BTCBackgroundTask implements Runnable {
 		if (delay > r)
 			this.spawnChickens();
 		delay++;
-		main.updateScoreBoard();
 	}
 
 	public void setDelay(int d) {

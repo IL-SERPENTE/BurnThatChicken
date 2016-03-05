@@ -80,7 +80,7 @@ public class BTCChickenChecker implements Runnable {
 								+ "Vous avez perdu !", 0, 100, 0);
 					}
 					main.checkPlayers();
-					main.updateScoreBoard();
+					player.updateScoreboard();
 				}
 			}
 		}

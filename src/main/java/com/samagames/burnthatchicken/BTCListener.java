@@ -69,7 +69,7 @@ public class BTCListener implements Listener {
 					data.getSpecialAttribute().getDuration());
 			data.getSpecialAttribute().run(main, shooter);
 		}
-		main.updateScoreBoard();
+		player.updateScoreboard();
 	}
 
 	@EventHandler

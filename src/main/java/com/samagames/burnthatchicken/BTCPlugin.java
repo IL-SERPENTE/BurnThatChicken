@@ -205,7 +205,7 @@ public class BTCPlugin extends JavaPlugin {
 					+ ChatColor.GOLD
 					+ " activé"
 					+ (duration == -1 ? "" : " pour " + (duration / 20)
-							+ " secondes !"), 0, 40, 0);
+							+ " seconde" + ((duration / 20) > 1 ? "s" : "") + " !"), 0, 40, 0);
 		}
 	}
 

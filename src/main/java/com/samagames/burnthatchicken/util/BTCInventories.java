@@ -44,7 +44,7 @@ public class BTCInventories {
 		BookMeta meta = (BookMeta) book.getItemMeta();
 		meta.addPage(
 				"\n\n ]-------[ ]-------[\n       SamaGames\n    BurnThatChicken\n ]-------[ ]-------[\n\nObjectif :\n\nTuez tout les poulets avant qu'ils n'arrivent en bas !",
-				"\nPoulets spéciaux :\n\nCertains poulets vous donnent des bonus, repérez les !\nAttention ils ne sont pas tous gentils...");
+				"\nPoulets spéciaux :\n\nCertains poulets vous donnent des bonus, repérez les !\nAttention ils ne sont pas tous gentils...\n(vous n'êtes pas obligés de les tuer)");
 		meta.setAuthor("Rigner");
 		meta.setDisplayName(ChatColor.AQUA + "" + ChatColor.BOLD
 				+ "BurnThatChicken");

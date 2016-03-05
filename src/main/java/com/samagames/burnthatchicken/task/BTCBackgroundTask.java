@@ -41,7 +41,7 @@ public class BTCBackgroundTask implements Runnable {
 			}
 			r += delays[i];
 		}
-		if (delay > r && ((delay - r) % 2 == 0 || random.nextInt(10) < 7))
+		if (delay > r)
 			this.spawnChickens();
 		delay++;
 		main.updateScoreBoard();

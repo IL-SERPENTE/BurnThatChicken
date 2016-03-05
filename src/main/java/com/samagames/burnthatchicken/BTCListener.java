@@ -6,6 +6,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Chicken;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,6 +31,7 @@ import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.MetadataUtils;
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
 import com.samagames.burnthatchicken.util.GameState;
+import org.bukkit.util.Vector;
 
 public class BTCListener implements Listener {
 	private BTCPlugin main;
@@ -179,11 +181,12 @@ public class BTCListener implements Listener {
 				((Player) ev.getEntity().getShooter()).getUniqueId(),
 				SpecialChicken.DOUBLE_ARROW)) {
 			Arrow arrow1 = (Arrow)ev.getEntity();
+			Vector velocity = arrow1.getVelocity();
 			main.getServer().getScheduler().runTaskLater(main, () ->
 			{
-				Arrow arrow2 = ((Player) ev.getEntity().getShooter()).shootArrow();
+				Arrow arrow2 = (Arrow) arrow1.getWorld().spawnEntity(arrow1.getLocation(), EntityType.ARROW);
 				arrow2.setFireTicks(arrow1.getFireTicks());
-				arrow2.setVelocity(arrow2.getVelocity().normalize().multiply(arrow1.getVelocity().length()));
+				arrow2.setVelocity(velocity);
 				arrow2.setShooter(arrow1.getShooter());
 				MetadataUtils.setMetaData(main, arrow2, "btc-arrow2", "");
 			}, 2);

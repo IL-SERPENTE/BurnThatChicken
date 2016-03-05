@@ -58,7 +58,7 @@ public class BTCGame extends Game<BTCPlayer> {
 
 	private void selectPlayers() {
 		Random random = new Random();
-		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
+		List<BTCPlayer> list = new ArrayList<>();
 		list.addAll(getInGamePlayers().values());
 		for (BTCPlayer player : list) {
 			try {

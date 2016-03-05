@@ -25,7 +25,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.util.Vector;
 
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
 import com.samagames.burnthatchicken.metadata.MetadataUtils;
@@ -83,10 +82,8 @@ public class BTCListener implements Listener {
 			return;
 		}
 		if (main.getGame().getGameState() != GameState.IN_GAME
-				|| ev.getCause() != DamageCause.ENTITY_ATTACK) {
+				|| ev.getCause() != DamageCause.ENTITY_ATTACK)
 			ev.setCancelled(true);
-			return;
-		}
 	}
 
 	@EventHandler

@@ -57,7 +57,7 @@ public class BTCInventories {
 		ItemMeta m = item.getItemMeta();
 		if (name != null)
 			m.setDisplayName(name);
-		ArrayList<String> lore = new ArrayList<String>();
+		ArrayList<String> lore = new ArrayList<>();
 		if (desc != null) {
 			for (String d : desc)
 				if (d != null)

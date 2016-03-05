@@ -25,7 +25,7 @@ public class BTCMap {
 		this.lobby = lobby;
 		this.move = move;
 		this.jump = jump;
-		gamezones = new ArrayList<BTCGameZone>();
+		gamezones = new ArrayList<>();
 		id = 0;
 	}
 

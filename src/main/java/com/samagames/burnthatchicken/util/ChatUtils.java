@@ -25,14 +25,6 @@ public class ChatUtils {
 				.getGameTag();
 	}
 
-	public static void sendMessageToNameList(List<String> list, String msg) {
-		for (String name : list) {
-			Player p = Bukkit.getPlayer(name);
-			if (p != null)
-				p.sendMessage(msg);
-		}
-	}
-
 	public static void broadcastMessage(String msg) {
 		Bukkit.getConsoleSender().sendMessage(msg);
 		for (Player p : Bukkit.getOnlinePlayers())
@@ -58,25 +50,6 @@ public class ChatUtils {
 						title));
 		((CraftPlayer) p).getHandle().playerConnection
 				.sendPacket(new PacketPlayOutTitle(fadein, duration, fadeout));
-	}
-
-	public static void setFooterAndHeader(Player player, String footer,
-			String header) {
-		if (!(player instanceof CraftPlayer))
-			return;
-		IChatBaseComponent headercomp = ChatSerializer.a("\"" + header + "\"");
-		IChatBaseComponent footercomp = ChatSerializer.a("\"" + footer + "\"");
-		PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter(
-				headercomp);
-		try {
-			Field field = packet.getClass().getDeclaredField("b");
-			field.setAccessible(true);
-			field.set(packet, footercomp);
-			field.setAccessible(false);
-		} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
-			Bukkit.getLogger().log(Level.SEVERE, e.getMessage(), e);
-		}
-		((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
 	}
 
 	public static void broadcastBigMessage(String msg, int fadein,

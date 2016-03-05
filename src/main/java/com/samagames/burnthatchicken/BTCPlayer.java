@@ -2,7 +2,6 @@ package com.samagames.burnthatchicken;
 
 import net.samagames.api.games.GamePlayer;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;

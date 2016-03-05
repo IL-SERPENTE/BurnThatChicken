@@ -80,7 +80,7 @@ public class BTCPlugin extends JavaPlugin {
 
 	public void checkPlayers() {
 		int n = 0;
-		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
+		List<BTCPlayer> list = new ArrayList<>();
 		for (BTCPlayer player : game.getInGamePlayers().values()) {
 			if (player.isSpectator() || player.isModerator())
 				continue;

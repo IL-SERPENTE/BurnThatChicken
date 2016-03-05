@@ -12,7 +12,7 @@ import com.samagames.burnthatchicken.BTCPlugin;
 import com.samagames.burnthatchicken.task.BTCBackgroundTask;
 
 public enum SpecialChicken {
-	DOUBLE_ARROW(ChatColor.GREEN, EnumParticle.CRIT, 120, "Double flêches"), BLINDNESS(
+	DOUBLE_ARROW(ChatColor.GREEN, EnumParticle.CRIT, 120, "Double flèches"), BLINDNESS(
 			ChatColor.BLACK, EnumParticle.SMOKE_NORMAL, 20, "Aveugle"), MORE_CHICKENS(
 			ChatColor.RED, EnumParticle.FLAME, -1, "Poulets x3");
 

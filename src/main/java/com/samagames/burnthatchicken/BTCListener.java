@@ -168,6 +168,7 @@ public class BTCListener implements Listener {
 	}
 
 	@EventHandler
+	@SuppressWarnings("deprecation")
 	public void onShoot(ProjectileLaunchEvent ev) {
 		if (!(ev.getEntity() instanceof Arrow)
 				|| ev.getEntity().getShooter() == null
@@ -180,24 +181,15 @@ public class BTCListener implements Listener {
 		else if (main.hasPowerUp(
 				((Player) ev.getEntity().getShooter()).getUniqueId(),
 				SpecialChicken.DOUBLE_ARROW)) {
-			double angle = Math.PI / 60;
-			Arrow arrow1 = (Arrow) ev.getEntity();
-			Vector vec = arrow1.getVelocity();
-			Vector vec1 = new Vector(vec.getZ() * Math.sin(angle) + vec.getX()
-					* Math.cos(angle), vec.getY(), vec.getZ() * Math.cos(angle)
-					- vec.getX() * Math.sin(angle));
-			angle *= -1;
-			Vector vec2 = new Vector(vec.getZ() * Math.sin(angle) + vec.getX()
-					* Math.cos(angle), vec.getY(), vec.getZ() * Math.cos(angle)
-					- vec.getX() * Math.sin(angle));
-			arrow1.setVelocity(vec1);
-			Arrow arrow2 = arrow1.getWorld().spawnArrow(
-					arrow1.getLocation().add(vec2.clone().multiply(0.3)), vec2,
-					0.6F, 12F);
-			arrow2.setFireTicks(arrow1.getFireTicks());
-			arrow2.setVelocity(vec2);
-			arrow2.setShooter(arrow1.getShooter());
-			MetadataUtils.setMetaData(main, arrow2, "btc-arrow2", "");
+			Arrow arrow1 = (Arrow)ev.getEntity();
+			main.getServer().getScheduler().runTaskLater(main, () ->
+			{
+				Arrow arrow2 = ((Player) ev.getEntity().getShooter()).shootArrow();
+				arrow2.setFireTicks(arrow1.getFireTicks());
+				arrow2.setVelocity(arrow2.getVelocity().normalize().multiply(arrow1.getVelocity().length()));
+				arrow2.setShooter(arrow1.getShooter());
+				MetadataUtils.setMetaData(main, arrow2, "btc-arrow2", "");
+			}, 2);
 		}
 	}
 

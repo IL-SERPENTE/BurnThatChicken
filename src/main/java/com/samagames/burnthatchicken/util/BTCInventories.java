@@ -28,6 +28,9 @@ public class BTCInventories {
 				new Enchantment[] { Enchantment.ARROW_FIRE,
 						Enchantment.ARROW_INFINITE, Enchantment.DURABILITY },
 				new int[] { 1, 1, 10 });
+		ItemMeta meta = bow.getItemMeta();
+		meta.spigot().setUnbreakable(true);
+		bow.setItemMeta(meta);
 		for (int i = 0; i < 9; i++)
 			inv.setItem(i, bow);
 		ItemStack arrow = new ItemStack(Material.ARROW);

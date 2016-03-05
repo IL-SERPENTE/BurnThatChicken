@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import net.samagames.api.SamaGamesAPI;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -31,7 +30,6 @@ import com.samagames.burnthatchicken.util.GameState;
 public class BTCPlugin extends JavaPlugin {
 	private static BTCPlugin instance;
 
-	private BTCListener listener;
 	private BTCGame game;
 
 	private BTCMap map;
@@ -53,17 +51,16 @@ public class BTCPlugin extends JavaPlugin {
 			getServer().shutdown();
 			return;
 		}
-		listener = new BTCListener(this);
-		powerups = new ArrayList<PowerUpTask>();
-		ranking = new HashMap<Integer, BTCPlayer>();
+		powerups = new ArrayList<>();
+		ranking = new HashMap<>();
 
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this,
+		getServer().getScheduler().runTaskTimer(this,
 				new BTCBackgroundTask(this), 20, 20);
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this,
+		getServer().getScheduler().runTaskTimer(this,
 				new BTCChickenChecker(this), 1, 1);
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this,
+		getServer().getScheduler().runTaskTimer(this,
 				new BTCNoSprintTask(this), 1, 1);
-		getServer().getPluginManager().registerEvents(listener, this);
+		getServer().getPluginManager().registerEvents(new BTCListener(this), this);
 
 		for (World w : getServer().getWorlds())
 			for (Entity e : w.getEntities())
@@ -147,8 +144,8 @@ public class BTCPlugin extends JavaPlugin {
 	        return;
 	  
 		int n = game.getInGamePlayers().size();
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			Scoreboard sc = Bukkit.getScoreboardManager().getNewScoreboard();
+		for (Player p : getServer().getOnlinePlayers()) {
+			Scoreboard sc = getServer().getScoreboardManager().getNewScoreboard();
 			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "BTC", "dummy");
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			obj.getScore("").setScore(-1);
@@ -195,10 +192,10 @@ public class BTCPlugin extends JavaPlugin {
 	public void addPowerUp(UUID player, SpecialChicken powerup, int duration) {
 		if (duration != -1) {
 			PowerUpTask task = new PowerUpTask(this, player, powerup);
-			Bukkit.getScheduler().scheduleSyncDelayedTask(this, task, duration);
+			getServer().getScheduler().runTaskLater(this, task, duration);
 			powerups.add(task);
 		}
-		Player p = Bukkit.getPlayer(player);
+		Player p = getServer().getPlayer(player);
 		if (p != null) {
 			ChatUtils.sendBigMessage(p, " ", 0, 40, 0);
 			ChatUtils.sendSmallMessage(p, ChatColor.AQUA
@@ -227,7 +224,7 @@ public class BTCPlugin extends JavaPlugin {
 	}
 
 	public BTCPlayer getPlayerByZone(int uniqueId) {
-		List<BTCPlayer> list = new ArrayList<BTCPlayer>();
+		List<BTCPlayer> list = new ArrayList<>();
 		list.addAll(game.getInGamePlayers().values());
 		for (BTCPlayer player : list) {
 			if (player.isSpectator() || player.isModerator())

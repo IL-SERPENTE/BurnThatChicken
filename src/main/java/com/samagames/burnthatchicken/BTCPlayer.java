@@ -26,9 +26,9 @@ public class BTCPlayer extends GamePlayer {
 		zone = null;
 		chickens = 0;
 		this.objective = new ObjectiveSign("burnthatchicken", ChatColor.GOLD + "BTC" + ChatColor.WHITE + " | " + ChatColor.AQUA + "00:00");
-		this.updateScoreboard();
 
-		this.game = (BTCGame) SamaGamesAPI.get().getGameManager().getGame();
+		this.game = BTCPlugin.getInstance().getGame();
+		this.updateScoreboard();
 	}
 
 	@Override
@@ -104,6 +104,7 @@ public class BTCPlayer extends GamePlayer {
 		if (!ok)
 			this.objective.setLine(i++, "Aucun");
 		this.objective.setLine(i++, "   ");
+		this.objective.updateLines();
 	}
 
 	public void setScoreboard()

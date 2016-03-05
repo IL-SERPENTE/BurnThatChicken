@@ -50,7 +50,7 @@ public class BTCGame extends Game<BTCPlayer> {
 					ChatUtils
 					.broadcastSmallMessage(
 							ChatColor.GOLD
-							+ "Tuez tout les poulets avant qu'ils ne tombent !",
+							+ "Tuez tous les poulets avant qu'ils ne tombent !",
 							0, 40, 0);
 				}, 20);
 		selectPlayers();

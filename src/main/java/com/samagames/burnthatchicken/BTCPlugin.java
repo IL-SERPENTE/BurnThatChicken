@@ -146,7 +146,7 @@ public class BTCPlugin extends JavaPlugin {
 		int n = game.getInGamePlayers().size();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Scoreboard sc = Bukkit.getScoreboardManager().getNewScoreboard();
-			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "" + ChatColor.BOLD + "BurnThatChicken", "dummy");
+			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "BTC", "dummy");
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			obj.getScore("").setScore(-1);
 			obj.getScore(ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n).setScore(-2);

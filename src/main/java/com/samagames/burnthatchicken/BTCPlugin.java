@@ -146,32 +146,22 @@ public class BTCPlugin extends JavaPlugin {
 		int n = game.getInGamePlayers().size();
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			Scoreboard sc = Bukkit.getScoreboardManager().getNewScoreboard();
-			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "≡ BTC ≡",
-					"dummy");
+			Objective obj = sc.registerNewObjective(ChatColor.GOLD + "" + ChatColor.BOLD + "BurnThatChicken", "dummy");
 			obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 			obj.getScore("").setScore(-1);
-			obj.getScore(ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n)
-					.setScore(-2);
-			obj.getScore(" ").setScore(-3);
-			if (game.getGameState() == GameState.IN_GAME
-					|| game.getGameState() == GameState.FINISHED) {
-				int time = BTCBackgroundTask.getInstance().getDelay();
-				int min = time / 60;
-				int sec = time % 60;
-				obj.getScore(
-						ChatColor.GRAY + "Temps : " + ChatColor.WHITE
-								+ (min < 10 ? "0" : "") + min + ":"
-								+ (sec < 10 ? "0" : "") + sec).setScore(-4);
-				obj.getScore("  ").setScore(-5);
+			obj.getScore(ChatColor.GRAY + "Joueurs : " + ChatColor.WHITE + n).setScore(-2);
+
+			if (game.getGameState() == GameState.IN_GAME || game.getGameState() == GameState.FINISHED) {
 				BTCPlayer player = game.getPlayer(p.getUniqueId());
+				
 				if (player != null && !player.isModerator()) {
-					obj.getScore(
-							ChatColor.GRAY + "Poulets : " + ChatColor.WHITE
-									+ player.getChickens()).setScore(-6);
-					obj.getScore("   ").setScore(-7);
-					obj.getScore(ChatColor.GRAY + "PowerUps :").setScore(-8);
+					obj.getScore(ChatColor.GRAY + "Poulets : " + ChatColor.WHITE + player.getChickens()).setScore(-3);
+					obj.getScore("   ").setScore(-4);
+					
+					obj.getScore(ChatColor.GRAY + "Bonus :").setScore(-5);
 					boolean ok = false;
-					int i = -9;
+					int i = -6;
+					
 					for (SpecialChicken sp : SpecialChicken.values()) {
 						if (this.hasPowerUp(p.getUniqueId(), sp)) {
 							obj.getScore(sp.getName()).setScore(i);
@@ -179,11 +169,24 @@ public class BTCPlugin extends JavaPlugin {
 							ok = true;
 						}
 					}
-					if (!ok)
-						obj.getScore("Aucun").setScore(i);
-					obj.getScore("    ").setScore(ok ? i : i - 1);
+					
+					if (!ok) {
+					    obj.getScore("Aucun").setScore(i);
+					    i--;
+					}
+						
+					obj.getScore("    ").setScore(i);
+					
+					int time = BTCBackgroundTask.getInstance().getDelay();
+    				int min = time / 60;
+    				int sec = time % 60;
+    				obj.getScore(
+    						ChatColor.GRAY + "Temps : " + ChatColor.WHITE
+    								+ (min < 10 ? "0" : "") + min + ":"
+    								+ (sec < 10 ? "0" : "") + sec).setScore(i--);
 				}
 			}
+			
 			p.setScoreboard(sc);
 		}
 	}

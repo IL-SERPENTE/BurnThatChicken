@@ -1,6 +1,6 @@
 package com.samagames.burnthatchicken.metadata;
 
-import net.minecraft.server.v1_8_R3.EnumParticle;
+import net.minecraft.server.v1_9_R1.EnumParticle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

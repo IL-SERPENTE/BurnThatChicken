@@ -1,7 +1,6 @@
 package com.samagames.burnthatchicken;
 
 import com.samagames.burnthatchicken.metadata.SpecialChicken;
-import net.samagames.api.SamaGamesAPI;
 import net.samagames.api.games.GamePlayer;
 
 import net.samagames.tools.scoreboards.ObjectiveSign;
@@ -63,10 +62,6 @@ public class BTCPlayer extends GamePlayer {
 		this.zone = zone;
 	}
 
-	public int getChickens() {
-		return chickens;
-	}
-
 	public void addChicken() {
 		chickens++;
 		if (chickens % 5 == 0)
@@ -103,7 +98,7 @@ public class BTCPlayer extends GamePlayer {
 			}
 		if (!ok)
 			this.objective.setLine(i++, "Aucun");
-		this.objective.setLine(i++, "   ");
+		this.objective.setLine(i, "   ");
 		this.objective.updateLines();
 	}
 

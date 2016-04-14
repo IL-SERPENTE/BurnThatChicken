@@ -76,8 +76,6 @@ public class BTCPlugin extends JavaPlugin {
         int n = 0;
         List<BTCPlayer> list = new ArrayList<>();
         for (BTCPlayer player : game.getInGamePlayers().values()) {
-            if (player.isSpectator() || player.isModerator())
-                continue;
             n++;
             list.add(player);
         }

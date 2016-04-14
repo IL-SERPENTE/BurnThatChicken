@@ -59,27 +59,31 @@ public class BTCChickenChecker implements Runnable {
                         && !zone.isEnded()
                         && zone.isInChickenEndZone(e.getLocation()))
                     e.remove();
-        } else {
-            for (BTCGameZone zone : main.getCurrentMap().getGameZones()) {
-                if (zone.getUniqueId() == meta.getGameZoneId()
-                        && !zone.isEnded()
-                        && zone.isInChickenEndZone(e.getLocation())) {
-                    zone.setEnded(true);
-                    clearChicken(zone);
-                    BTCPlayer player = main.getPlayerByZone(zone.getUniqueId());
-                    if (player == null)
-                        return;
-                    player.setSpectator();
-                    main.addPlayerToRank(player);
-                    Player p = player.getPlayerIfOnline();
-                    ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
-                    if (p != null) {
-                        ChatUtils.sendBigMessage(p, "", 0, 100, 0);
-                        ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
-                    }
-                    main.checkPlayers();
-                    player.updateScoreboard();
+        } else
+            checkZones(meta, e);
+    }
+
+    private void checkZones(ChickenMetadataValue meta, Entity e)
+    {
+        for (BTCGameZone zone : main.getCurrentMap().getGameZones()) {
+            if (zone.getUniqueId() == meta.getGameZoneId()
+                    && !zone.isEnded()
+                    && zone.isInChickenEndZone(e.getLocation())) {
+                zone.setEnded(true);
+                clearChicken(zone);
+                BTCPlayer player = main.getPlayerByZone(zone.getUniqueId());
+                if (player == null)
+                    return;
+                player.setSpectator();
+                main.addPlayerToRank(player);
+                Player p = player.getPlayerIfOnline();
+                ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
+                if (p != null) {
+                    ChatUtils.sendBigMessage(p, "", 0, 100, 0);
+                    ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
                 }
+                main.checkPlayers();
+                player.updateScoreboard();
             }
         }
     }

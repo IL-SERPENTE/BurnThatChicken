@@ -55,6 +55,11 @@ public class BTCListener implements Listener {
         }
         Player shooter = (Player) arrow.getShooter();
         BTCPlayer player = main.getGame().getPlayer(shooter.getUniqueId());
+        onEntityDamagedByEntity2(player, ev, data, chicken, arrow, shooter);
+    }
+
+    private void onEntityDamagedByEntity2(BTCPlayer player, EntityDamageByEntityEvent ev, ChickenMetadataValue data, Chicken chicken, Arrow arrow, Player shooter)
+    {
         if (player == null || player.getZone().getUniqueId() != data.getGameZoneId()) {
             ev.setCancelled(true);
             return ;

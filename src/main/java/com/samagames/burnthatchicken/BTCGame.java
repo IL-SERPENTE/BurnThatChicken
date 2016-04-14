@@ -20,105 +20,105 @@ import com.samagames.burnthatchicken.util.ChatUtils;
 import com.samagames.burnthatchicken.util.GameState;
 
 public class BTCGame extends Game<BTCPlayer> {
-	private GameState gamestate;
-	private BTCPlugin main;
+    private GameState gamestate;
+    private BTCPlugin main;
 
-	public BTCGame(BTCPlugin plugin) {
-		super("burnthatchicken", "BurnThatChicken", "", BTCPlayer.class);
-		gamestate = GameState.INITIALIZING;
-		main = plugin;
-	}
+    public BTCGame(BTCPlugin plugin) {
+        super("burnthatchicken", "BurnThatChicken", "", BTCPlayer.class);
+        gamestate = GameState.INITIALIZING;
+        main = plugin;
+    }
 
-	public GameState getGameState() {
-		return gamestate;
-	}
+    public GameState getGameState() {
+        return gamestate;
+    }
 
-	public void setGameState(GameState gs) {
-		gamestate = gs;
-	}
+    public void setGameState(GameState gs) {
+        gamestate = gs;
+    }
 
-	@Override
-	public void startGame() {
-		super.startGame();
-		Bukkit.getScheduler()
-				.scheduleSyncDelayedTask(main,
-						() -> {
-							ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
-							ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Tuez tous les poulets avant qu'ils ne tombent !", 0, 40, 0);
-						}, 20);
-		selectPlayers();
-		main.getGame().setGameState(GameState.IN_GAME);
-		this.main.getServer().getScheduler().runTaskTimerAsynchronously(this.main, new Runnable()
-		{
-			private int time = 0;
+    @Override
+    public void startGame() {
+        super.startGame();
+        Bukkit.getScheduler()
+                .scheduleSyncDelayedTask(main,
+                        () -> {
+                            ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
+                            ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Tuez tous les poulets avant qu'ils ne tombent !", 0, 40, 0);
+                        }, 20);
+        selectPlayers();
+        main.getGame().setGameState(GameState.IN_GAME);
+        this.main.getServer().getScheduler().runTaskTimerAsynchronously(this.main, new Runnable()
+        {
+            private int time = 0;
 
-			@Override
-			public void run()
-			{
-				this.time++;
-				for (BTCPlayer arena : gamePlayers.values())
-					arena.setScoreboardTime(this.formatTime(time));
-			}
+            @Override
+            public void run()
+            {
+                this.time++;
+                for (BTCPlayer arena : gamePlayers.values())
+                    arena.setScoreboardTime(this.formatTime(time));
+            }
 
-			public String formatTime(int time)
-			{
-				int mins = time / 60;
-				int secs = time - mins * 60;
+            public String formatTime(int time)
+            {
+                int mins = time / 60;
+                int secs = time - mins * 60;
 
-				String secsSTR = (secs < 10) ? "0" + Integer.toString(secs) : Integer.toString(secs);
+                String secsSTR = (secs < 10) ? "0" + Integer.toString(secs) : Integer.toString(secs);
 
-				return mins + ":" + secsSTR;
-			}
-		}, 0L, 20L);
-	}
+                return mins + ":" + secsSTR;
+            }
+        }, 0L, 20L);
+    }
 
-	private void selectPlayers() {
-		Random random = new Random();
-		List<BTCPlayer> list = new ArrayList<>();
-		list.addAll(getInGamePlayers().values());
-		for (BTCPlayer player : list) {
-			try {
-				Player p = player.getPlayerIfOnline();
-				if (p == null)
-					continue;
-				int n;
-				BTCGameZone zone;
-				do {
-					n = Math.abs(random.nextInt() % gameManager.getGameProperties().getMaxSlots());
-					zone = main.getCurrentMap().getGameZones().get(n);
-				} while (zone.getPlayer() != null);
-				player.setZone(zone);
-				zone.setPlayer(player);
-				p.teleport(zone.getPlayerSpawn());
-				if (!main.getCurrentMap().canPlayersMove())
-					p.setWalkSpeed(0);
-				p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
-				BTCInventories.giveGameInventory(p);
-				player.setScoreboard();
-			} catch (Exception e) {
-				main.getServer().getLogger().log(Level.SEVERE, e.getMessage(), e);
-			}
-		}
-		for (BTCGameZone zone : main.getCurrentMap().getGameZones())
-			zone.setEnded(zone.getPlayer() == null);
-	}
+    private void selectPlayers() {
+        Random random = new Random();
+        List<BTCPlayer> list = new ArrayList<>();
+        list.addAll(getInGamePlayers().values());
+        for (BTCPlayer player : list) {
+            try {
+                Player p = player.getPlayerIfOnline();
+                if (p == null)
+                    continue;
+                int n;
+                BTCGameZone zone;
+                do {
+                    n = Math.abs(random.nextInt() % gameManager.getGameProperties().getMaxSlots());
+                    zone = main.getCurrentMap().getGameZones().get(n);
+                } while (zone.getPlayer() != null);
+                player.setZone(zone);
+                zone.setPlayer(player);
+                p.teleport(zone.getPlayerSpawn());
+                if (!main.getCurrentMap().canPlayersMove())
+                    p.setWalkSpeed(0);
+                p.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
+                BTCInventories.giveGameInventory(p);
+                player.setScoreboard();
+            } catch (Exception e) {
+                main.getServer().getLogger().log(Level.SEVERE, e.getMessage(), e);
+            }
+        }
+        for (BTCGameZone zone : main.getCurrentMap().getGameZones())
+            zone.setEnded(zone.getPlayer() == null);
+    }
 
-	@Override
-	public void handleLogout(Player player) {
-		super.handleLogout(player);
-		if (main.getGame().getGameState() == GameState.FINISHED)
-			return;
-		if (main.getGame().getGameState() == GameState.IN_GAME) {
-			BTCPlayer btc = main.getGame().getPlayer(player.getUniqueId());
-			if (btc == null)
-				return;
+    @Override
+    public void handleLogout(Player player) {
+        super.handleLogout(player);
+        if (main.getGame().getGameState() == GameState.FINISHED)
+            return;
+        if (main.getGame().getGameState() == GameState.IN_GAME) {
+            BTCPlayer btc = main.getGame().getPlayer(player.getUniqueId());
+            if (btc == null)
+                return;
 
-			main.addPlayerToRank(btc);
-			if (btc.getZone() != null) {
-				btc.getZone().setEnded(true);
-				BTCChickenChecker.getInstance().clearChicken(btc.getZone());
-			}
-			main.checkPlayers();
-		}
-	}
+            main.addPlayerToRank(btc);
+            if (btc.getZone() != null) {
+                btc.getZone().setEnded(true);
+                BTCChickenChecker.getInstance().clearChicken(btc.getZone());
+            }
+            main.checkPlayers();
+        }
+    }
 }

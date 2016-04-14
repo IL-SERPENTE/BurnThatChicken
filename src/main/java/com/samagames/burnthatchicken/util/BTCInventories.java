@@ -9,11 +9,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class BTCInventories {
-    private static ItemStack book;
+    private static ItemStack book = null;
 
     private BTCInventories() {
     }
@@ -57,7 +56,7 @@ public class BTCInventories {
         inv.addItem(book);
     }
 
-    public static void setItemMeta(ItemStack item, String name, String[] desc, Enchantment e[], int[] l) {
+    public static void setItemMeta(ItemStack item, String name, String[] desc, Enchantment[] e, int[] l) {
         ItemMeta m = item.getItemMeta();
         if (name != null)
             m.setDisplayName(name);

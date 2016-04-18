@@ -8,17 +8,16 @@ import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class ParticlesUtils {
-	private ParticlesUtils() {
-	}
+    private ParticlesUtils() {
+    }
 
-	public static void sendParticleToPlayers(EnumParticle particule, float x,
-			float y, float z) {
-		PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(
-				particule, true, x, y, z, 0F, 0F, 0F, 0F, 1, 1);
-		for (Player p : Bukkit.getOnlinePlayers()) {
-			if (!(p instanceof CraftPlayer))
-				return;
-			((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
-		}
-	}
+    public static void sendParticleToPlayers(EnumParticle particule, float x, float y, float z) {
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(
+                particule, true, x, y, z, 0F, 0F, 0F, 0F, 1, 1);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (!(p instanceof CraftPlayer))
+                return;
+            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+        }
+    }
 }

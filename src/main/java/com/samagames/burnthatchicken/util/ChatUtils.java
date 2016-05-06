@@ -2,14 +2,10 @@ package com.samagames.burnthatchicken.util;
 
 import java.util.Collection;
 
-import net.minecraft.server.v1_9_R1.IChatBaseComponent;
-import net.minecraft.server.v1_9_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_9_R1.PacketPlayOutTitle;
-import net.minecraft.server.v1_9_R1.PacketPlayOutTitle.EnumTitleAction;
 import net.samagames.api.SamaGamesAPI;
 
+import net.samagames.tools.Titles;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class ChatUtils {
@@ -26,34 +22,9 @@ public class ChatUtils {
             p.sendMessage(msg);
     }
 
-    public static void sendBigMessage(Player p, String msg, int fadein, int duration, int fadeout) {
-        IChatBaseComponent title = ChatSerializer
-                .a("{'text': \"" + msg + "\"}");
-        ((CraftPlayer) p).getHandle().playerConnection
-                .sendPacket(new PacketPlayOutTitle(EnumTitleAction.TITLE, title));
-        ((CraftPlayer) p).getHandle().playerConnection
-                .sendPacket(new PacketPlayOutTitle(fadein, duration, fadeout));
-    }
-
-    public static void sendSmallMessage(Player p, String msg, int fadein, int duration, int fadeout) {
-        IChatBaseComponent title = ChatSerializer
-                .a("{'text': \"" + msg + "\"}");
-        ((CraftPlayer) p).getHandle().playerConnection
-                .sendPacket(new PacketPlayOutTitle(EnumTitleAction.SUBTITLE,
-                        title));
-        ((CraftPlayer) p).getHandle().playerConnection
-                .sendPacket(new PacketPlayOutTitle(fadein, duration, fadeout));
-    }
-
-    public static void broadcastBigMessage(String msg, int fadein, int duration, int fadeout) {
+    public static void broadcastTitle(String title, String subtitle, int fadein, int duration, int fadeout) {
         Collection<? extends Player> list = Bukkit.getOnlinePlayers();
         for (Player p : list)
-            sendBigMessage(p, msg, fadein, duration, fadeout);
-    }
-
-    public static void broadcastSmallMessage(String msg, int fadein, int duration, int fadeout) {
-        Collection<? extends Player> list = Bukkit.getOnlinePlayers();
-        for (Player p : list)
-            sendSmallMessage(p, msg, fadein, duration, fadeout);
+            Titles.sendTitle(p, fadein, duration, fadeout, title, subtitle);
     }
 }

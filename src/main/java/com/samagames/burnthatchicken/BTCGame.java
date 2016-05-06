@@ -42,10 +42,8 @@ public class BTCGame extends Game<BTCPlayer> {
         super.startGame();
         Bukkit.getScheduler()
                 .scheduleSyncDelayedTask(main,
-                        () -> {
-                            ChatUtils.broadcastBigMessage(" ", 0, 40, 0);
-                            ChatUtils.broadcastSmallMessage(ChatColor.GOLD + "Tuez tous les poulets avant qu'ils ne tombent !", 0, 40, 0);
-                        }, 20);
+                        () -> ChatUtils.broadcastTitle(" ", ChatColor.GOLD + "Tuez tous les poulets avant qu'ils ne tombent !", 0, 40, 0)
+                        , 20);
         selectPlayers();
         main.getGame().setGameState(GameState.IN_GAME);
         this.main.getServer().getScheduler().runTaskTimerAsynchronously(this.main, new Runnable()

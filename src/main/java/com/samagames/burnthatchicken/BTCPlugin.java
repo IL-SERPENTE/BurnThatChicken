@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import net.samagames.api.SamaGamesAPI;
 
+import net.samagames.tools.Titles;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -91,15 +92,13 @@ public class BTCPlugin extends JavaPlugin {
                 BTCPlayer who = entry.getValue();
                 Player player = who.getPlayerIfOnline();
                 if (player != null) {
-                    ChatUtils.sendSmallMessage(player, ChatColor.AQUA
+                    Titles.sendTitle(player, 0, 100, 0, ChatColor.GOLD + "Fin de la partie", ChatColor.AQUA
                             + "Tu es " + entry.getKey()
-                            + (entry.getKey() == 1 ? "er" : "e"), 0, 100, 0);
+                            + (entry.getKey() == 1 ? "er" : "e"));
                 }
                 if (entry.getKey() == 1)
                     who.addStars(1, "Victoire");
             }
-            ChatUtils.broadcastBigMessage(ChatColor.GOLD + "Fin de la partie",
-                    0, 100, 0);
             ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix()
                     + " Fin de la partie");
             game.setGameState(GameState.FINISHED);
@@ -138,15 +137,13 @@ public class BTCPlugin extends JavaPlugin {
             powerups.add(task);
         }
         Player p = getServer().getPlayer(player);
-        if (p != null) {
-            ChatUtils.sendBigMessage(p, " ", 0, 40, 0);
-            ChatUtils.sendSmallMessage(p, ChatColor.AQUA
+        if (p != null)
+            Titles.sendTitle(p, 0, 40, 0, " ", ChatColor.AQUA
                     + powerup.getName()
                     + ChatColor.GOLD
                     + " activé"
                     + (duration == -1 ? "" : " pour " + (duration / 20)
-                    + " seconde" + ((duration / 20) > 1 ? "s" : "") + " !"), 0, 40, 0);
-        }
+                    + " seconde" + ((duration / 20) > 1 ? "s" : "") + " !"));
     }
 
     public boolean hasPowerUp(UUID player, SpecialChicken powerup) {

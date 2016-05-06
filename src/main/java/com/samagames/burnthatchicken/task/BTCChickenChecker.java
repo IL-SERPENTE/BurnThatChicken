@@ -2,6 +2,7 @@ package com.samagames.burnthatchicken.task;
 
 import java.util.Random;
 
+import net.samagames.tools.Titles;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -78,10 +79,8 @@ public class BTCChickenChecker implements Runnable {
                 main.addPlayerToRank(player);
                 Player p = player.getPlayerIfOnline();
                 ChatUtils.broadcastMessage(ChatUtils.getPluginPrefix() + " " + player.getName() + " est éliminé !");
-                if (p != null) {
-                    ChatUtils.sendBigMessage(p, "", 0, 100, 0);
-                    ChatUtils.sendSmallMessage(p, ChatColor.GOLD + "Vous avez perdu !", 0, 100, 0);
-                }
+                if (p != null)
+                    Titles.sendTitle(p, 0, 100, 0, "", ChatColor.GOLD + "Vous avez perdu !");
                 main.checkPlayers();
                 player.updateScoreboard();
             }

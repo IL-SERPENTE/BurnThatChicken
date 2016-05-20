@@ -44,6 +44,7 @@ public class BTCPlugin extends JavaPlugin {
         game = new BTCGame(this);
         api = SamaGamesAPI.get();
         api.getGameManager().registerGame(game);
+        api.getGameManager().setKeepPlayerCache(true);
         map = BTCMap.loadMap(this);
         if (map == null) {
             getServer().shutdown();

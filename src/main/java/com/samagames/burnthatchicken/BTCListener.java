@@ -22,6 +22,7 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import com.samagames.burnthatchicken.metadata.ChickenMetadataValue;
@@ -184,5 +185,11 @@ public class BTCListener implements Listener {
     @EventHandler
     public void onHit(ProjectileHitEvent ev) {
         ev.getEntity().remove();
+    }
+
+    @EventHandler
+    public void onSecondHand(PlayerSwapHandItemsEvent ev)
+    {
+        ev.setCancelled(true);
     }
 }

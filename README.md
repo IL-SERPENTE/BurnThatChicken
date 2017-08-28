@@ -1,6 +1,6 @@
 ![SamaGames](https://assets.samagames.net/images/logo.png "SamaGames logo")
 
-## SamaGames - Bowling
+## SamaGames - BurnThatChicken
 
 Ce projet vous est mis a disposition dans une volonté de partage suite à la fermeture du serveur Minecraft [**SamaGames**](http://samagames.net).
 
